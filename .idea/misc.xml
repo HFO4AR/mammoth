@@ -5,6 +5,7 @@
   </component>
   <component name="CMakeWorkspace" PROJECT_DIR="$PROJECT_DIR$" />
   <component name="WestSettings"><![CDATA[{
+  "toolchainName": "zephyr",
   "boardName": "bee_stm32f4/stm32f407xx"
 }]]></component>
 </project>

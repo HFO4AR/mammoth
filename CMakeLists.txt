@@ -14,7 +14,7 @@ target_sources(app PRIVATE
         src/aim.cpp
         src/remote.cpp
         motorPack/motor.cpp
-        motorPack/Dji_Rm3508.cpp
+        motorPack/dji_rm3508.cpp
         motorPack/pid.cpp
         src/load_ring.cpp
         src/can.cpp
