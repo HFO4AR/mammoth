@@ -4,14 +4,14 @@
 
 #include "pid.h"
 #include "cmath"
-void Pid::init(float kp, float ki, float kd, float kaw, float max_output) {
+void Pid::Init(float kp, float ki, float kd, float kaw, float max_output) {
     data.Kaw = kaw;
     data.Kp = kp;
     data.Ki = ki;
     data.Kd = kd;
     data.max_output = max_output;
 }
-void Pid::compuate() {
+void Pid::Compuate() {
     data.error = data.target - data.actual;
     data.Kp_output = data.Kp * data.error;
     data.Kd_output = data.Kd * (data.error - data.last_error);

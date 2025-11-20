@@ -2,7 +2,7 @@
 // Created by nyuki on 2025/11/2.
 //
 
-#include "DM_S3519.h"
+#include "dm_s3519.h"
 
 #include <algorithm>
 #include <iostream>

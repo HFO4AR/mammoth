@@ -6,6 +6,6 @@
 #define MAMMOTH_CAN_H
 #include "zephyr/device.h"
 
-void can_init();
+void CanInit(const struct device *can_id);
 static const struct device *const can2 = DEVICE_DT_GET(DT_NODELABEL(can2));
 #endif //MAMMOTH_CAN_H

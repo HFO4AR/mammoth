@@ -10,6 +10,7 @@ public:
     int ch2;
     int ch3;
     int ch4;
-    void update();
+    void Update();
+protected:
 };
 #endif //MAMMOTH_REMOTE_H

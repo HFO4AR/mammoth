@@ -13,7 +13,7 @@
  *
  *
  ***/
-#include "Dji_Rm3508.h"
+#include "dji_rm3508.h"
 #include "cmath"
 #include <array>
 #include <algorithm>
@@ -23,12 +23,12 @@
 using namespace std;
 
 
-Dji_Rm3508 *motor3508_index[4] = {&motor0, &motor1, &motor2, &motor3};
+DjiRm3508 *motor3508_index[4] = {&motor0, &motor1, &motor2, &motor3};
 
 //can接收函数
 
 
-void get_rm3508_data(can_frame *frame) {
+void GetRm3508Data(can_frame *frame) {
     union rx_data_t {
         char input[8];
         struct {
@@ -47,7 +47,7 @@ void get_rm3508_data(can_frame *frame) {
     motor3508_index[motor_id]->spd = sys_be16_to_cpu(RxData.read.spd);
     motor3508_index[motor_id]->temp = RxData.read.temp;
     if (RxData.read.temp) {
-        motor3508_index[motor_id]->motor_enable = MOTOR_ENABLE;
+        motor3508_index[motor_id]->motor_enable_ = MOTOR_ENABLE;
     }
 
 }
@@ -55,7 +55,7 @@ void get_rm3508_data(can_frame *frame) {
 //can发送函数
 
 uint8_t TxData[8];
-void Dji_Rm3508::send_data() {
+void DjiRm3508::SendData() {
     can_frame frame;
     frame.id=0x200;
     frame.dlc=8;
@@ -66,8 +66,8 @@ void Dji_Rm3508::send_data() {
 
 
 
-void Dji_Rm3508::set_cur_ol(int target) {
-    switch (id) {
+void DjiRm3508::SetCurrentOpenLoop(int target) {
+    switch (id_) {
         case 0:
             TxData[0] = (target >> 8) & 0xFF;
             TxData[1] = target & 0xFF;
@@ -87,13 +87,13 @@ void Dji_Rm3508::set_cur_ol(int target) {
         default:
             break;
     }
-    if (sync_seed_mode!=ENABLE) {
-        send_data();
+    if (sync_seed_mode_!=ENABLE) {
+        SendData();
     }
-    total_pos_updata();
+    UpdateTotalPosition();
 }
 
 
-void Dji_Rm3508::enable_sync_seed() {
-    sync_seed_mode=ENABLE;
+void DjiRm3508::EnableSyncSeed() {
+    sync_seed_mode_=ENABLE;
 }

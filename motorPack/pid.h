@@ -2,8 +2,8 @@
 // Created by nyuki on 2025/11/2.
 //
 
-#ifndef CPP3508_PID_H
-#define CPP3508_PID_H
+#ifndef MAMMOTH_PID_H
+#define MAMMOTH_PID_H
 #ifdef __cplusplus
 class Pid {
 public:
@@ -28,11 +28,11 @@ public:
     pid_data_t data;
 
     Pid () =default;
-    void compuate();
-    void init(float kp, float ki, float kd, float kaw, float max_output);
+    void Compuate();
+    void Init(float kp, float ki, float kd, float kaw, float max_output);
 
 
 };
 #endif
 
-#endif //CPP3508_PID_H
+#endif //MAMMOTH_PID_H

@@ -3,3 +3,6 @@
 //
 
 #include "aim.h"
+void PTZ::Init() {
+
+}

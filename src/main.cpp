@@ -5,15 +5,17 @@
 #include "main.h"
 #include "zephyr/kernel.h"
 #include "can.h"
-int init() {
-
+int Init() {
+    int ret;
+    CanInit(can2);
     return 1;
 }
 
 int main() {
-    if (init()) {
+    if (Init()) {
         printk("初始化成功");
     }else {
         printk("初始化失败");
+        return 0;
     }
 }

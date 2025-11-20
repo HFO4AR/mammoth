@@ -29,6 +29,7 @@
     <mapping directory="$PROJECT_DIR$/../../modules/lib/open-amp" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../../modules/lib/picolibc" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../../zephyr" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../zephyr/boards/myboards" vcs="Git" />
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/eigen" vcs="Git" />
   </component>
