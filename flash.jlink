@@ -1,0 +1,16 @@
+# 设置目标设备 (请替换为你的型号)
+device STM32F407ZG
+
+# 设置接口和速度
+si SWD
+speed 4000
+
+# 加载文件并烧录 (请替换为你的文件路径)
+loadfile \\wsl.localhost\zephyr_debian\root\zephyrproject\zephyrapp\mammoth\build\zephyr\zephyr.elf
+
+# 复位并运行
+r
+go
+
+# 退出
+q
