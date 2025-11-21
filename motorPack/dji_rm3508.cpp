@@ -90,7 +90,7 @@ void DjiRm3508::SetCurrentOpenLoop(int target) {
         default:
             break;
     }
-    if (sync_seed_mode_!=ENABLE) {
+    if (!sync_seed_mode_) {
         SendData();
     }
     UpdateTotalPosition();

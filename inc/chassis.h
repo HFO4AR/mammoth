@@ -6,12 +6,13 @@
 #define MAMMOTH_CHASSIS_H
 #include "dji_rm3508.h"
 #include <Eigen/Dense>
-#include <algorithm>
 using namespace std;
 using namespace Eigen;
 class Chassis {
 public:
-
+    float max_wheel_rpm_;
+    Chassis(float max_rpm):max_wheel_rpm_(max_rpm){};
+    ~Chassis() = default;
     float max_speed_;
     float world_x_;
     float world_y_;
@@ -19,9 +20,6 @@ public:
     float world_yaw_;
     float world_pitch_;
     float world_roll_;
-    float max_wheel_rpm_;
-    Chassis(float max_rpm):max_wheel_rpm_(max_rpm){};
-
     virtual void SetSpeed() {}
 };
 class OmniChassis:Chassis {
@@ -31,6 +29,19 @@ public:
     DjiRm3508 motor_rl_;
     DjiRm3508 motor_rr_;
     DjiRm3508* motors[4] = {&motor_fl_, &motor_fr_, &motor_rl_, &motor_rr_};
+    Matrix<float,4,3> geometry_matrix_;
+    float wheel_radius_;
+    /**
+     * @brief 构造函数，初始化几何矩阵
+     * @param width_span  左右轮子中心间距 (Track Width)
+     * @param length_span 前后轮子中心间距 (Wheel Base)
+     * @param wheel_radius 轮子半径 (米)
+     * @param max_wheel_rpm      电机最大转速 (用于归一化保护)
+     * @param motor_fl_id   左前电机 ID
+     * @param motor_fr_id   右前电机 ID
+     * @param motor_rl_id   左后电机 ID
+     * @param motor_rr_id   右后电机 ID
+     */
     OmniChassis(float width_span, float length_span, float wheel_radius, float max_wheel_rpm,int motor_fl_id,int motor_fr_id,int motor_rl_id,int motor_rr_id,const struct device * can_dev) : Chassis(max_wheel_rpm),
         wheel_radius_(wheel_radius) ,motor_fl_(motor_fl_id, can_dev), motor_fr_(motor_fr_id,can_dev), motor_rl_(motor_rl_id,can_dev), motor_rr_(motor_rr_id,can_dev){
     float a = width_span / 2.0f;
@@ -46,21 +57,6 @@ public:
             1, 1, -k, // RL: vx + vy - k*w
             1, -1, k; // RR: vx - vy + k*w
 }
-    Matrix<float,4,3> geometry_matrix_;
-    float wheel_radius_;
-
-
-    /**
-     * @brief 构造函数，初始化几何矩阵
-     * @param width_span  左右轮子中心间距 (Track Width)
-     * @param length_span 前后轮子中心间距 (Wheel Base)
-     * @param wheel_radius 轮子半径 (米)
-     * @param max_wheel_rpm      电机最大转速 (用于归一化保护)
-     * @param motor_fl_id   左前电机 ID
-     * @param motor_fr_id   右前电机 ID
-     * @param motor_rl_id   左后电机 ID
-     * @param motor_rr_id   右后电机 ID
-     */
 
     void MotorInit(float spd_pid_kp, float spd_pid_ki, float spd_pid_kd,float spd_pid_max_output=2000,float pos_pid_kp=0, float pos_pid_ki=0, float pos_pid_kd=0,float pos_pid_max_output=2000);
     /**

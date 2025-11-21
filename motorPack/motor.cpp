@@ -65,7 +65,7 @@ void Motor::SetCurrent(int target) {
     }else {
         SetCurrentOpenLoop(0);
     }
-    motor_enable_ = MOTOR_DISABLE;
+    // motor_enable_ = MOTOR_DISABLE;
 }
 void Motor::UpdateTotalPosition() {
     if (pos - last_position_ > 4096) {

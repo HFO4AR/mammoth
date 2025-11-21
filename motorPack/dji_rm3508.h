@@ -8,8 +8,8 @@
 #include "motor.h"
 #include <zephyr/drivers/can.h>
 
-# define DISABLE 0
-# define ENABLE 1
+# define DISABLE false
+# define ENABLE true
 
 void GetRm3508Data(can_frame *frame);
 
@@ -21,7 +21,7 @@ public:
     void EnableSyncSend();
 private:
     const device * can_dev_;
-    int sync_seed_mode_=DISABLE;
+    bool sync_seed_mode_=DISABLE;
 };
 
 // void Motor_Set_Current(int16_t current0, int16_t current1, int16_t current2, int16_t current3);
