@@ -5,7 +5,7 @@
 #ifndef MAMMOTH_MOTOR_H
 #define MAMMOTH_MOTOR_H
 
-#include "main.h"
+
 #include "pid.h"
 #include <cstdint>
 #define MOTOR_ENABLE 1

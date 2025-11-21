@@ -17,13 +17,13 @@
 #include "cmath"
 #include <array>
 #include <algorithm>
-#include <main.h>
 #include <zephyr/sys/byteorder.h>
 #include "can.h"
+#include <chassis.h>
 using namespace std;
 
-
-DjiRm3508 *motor3508_index = chassis.motors;
+extern OmniChassis chassis;
+DjiRm3508 *motor3508_index = *chassis.motors;
 
 //can接收函数
 

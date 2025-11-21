@@ -22,7 +22,7 @@ public:
     float max_wheel_rpm_;
     Chassis(float max_rpm):max_wheel_rpm_(max_rpm){};
 
-    virtual void SetSpeed();
+    virtual void SetSpeed() {}
 };
 class OmniChassis:Chassis {
 public:

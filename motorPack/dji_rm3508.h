@@ -8,7 +8,6 @@
 #include "motor.h"
 #include <zephyr/drivers/can.h>
 
-#include "can.h"
 # define DISABLE 0
 # define ENABLE 1
 

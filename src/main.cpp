@@ -6,7 +6,6 @@
 #include "zephyr/kernel.h"
 #include "can.h"
 int Init() {
-    int ret;
     CanInit(chassis_can_dev);
     return 1;
 }
