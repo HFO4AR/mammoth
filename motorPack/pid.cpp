@@ -35,4 +35,5 @@ void Pid::Compuate() {
         data.output = 0;
     }
     data.last_error = data.error;
+    data.last_output= data.output;
 }

@@ -25,9 +25,9 @@ public:
     Pid pos_pid_;
     Pid spd_pid_;
 
-    virtual void SpdPidInit(float kp, float ki, float kd, float kaw=-1.0f, float max_output=1000.0f);
+    virtual void SpdPidInit(float kp, float ki, float kd, float max_output=1000.0f, float kaw=-1.0f);
 
-    virtual void PosPidInit(float kp, float ki, float kd, float kaw=-1.0f, float max_output=1000.0f);
+    virtual void PosPidInit(float kp, float ki, float kd, float max_output=1000.0f, float kaw=-1.0f);
 
     virtual void SetCurrentOpenLoop(int target);//open loop
 

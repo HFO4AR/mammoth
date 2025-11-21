@@ -20,11 +20,14 @@
 #include <zephyr/sys/byteorder.h>
 #include "can.h"
 #include <chassis.h>
+
+#include "main.h"
+
 using namespace std;
 
 extern OmniChassis chassis;
-DjiRm3508 *motor3508_index = *chassis.motors;
-
+// DjiRm3508 *motor3508_index = *chassis.motors;
+DjiRm3508 *motor3508_index[] = {&ptz.pitch_motor_};
 //can接收函数
 
 
@@ -42,12 +45,12 @@ void GetRm3508Data(can_frame *frame) {
     rx_data_t RxData{};
     memcpy(RxData.input,frame->data,frame->dlc);
     int motor_id = frame->id - 0x200 - 1;
-    motor3508_index[motor_id].pos = sys_be16_to_cpu(RxData.read.pos);
-    motor3508_index[motor_id].cur = sys_be16_to_cpu(RxData.read.cur);
-    motor3508_index[motor_id].spd = sys_be16_to_cpu(RxData.read.spd);
-    motor3508_index[motor_id].temp = RxData.read.temp;
+    motor3508_index[motor_id]->pos = sys_be16_to_cpu(RxData.read.pos);
+    motor3508_index[motor_id]->cur = sys_be16_to_cpu(RxData.read.cur);
+    motor3508_index[motor_id]->spd = sys_be16_to_cpu(RxData.read.spd);
+    motor3508_index[motor_id]->temp = RxData.read.temp;
     if (RxData.read.temp) {
-        motor3508_index[motor_id].motor_enable_ = MOTOR_ENABLE;
+        motor3508_index[motor_id]->motor_enable_ = MOTOR_ENABLE;
     }
 
 }
@@ -68,19 +71,19 @@ void DjiRm3508::SendData() const {
 
 void DjiRm3508::SetCurrentOpenLoop(int target) {
     switch (id_) {
-        case 0:
+        case 1:
             TxData[0] = (target >> 8) & 0xFF;
             TxData[1] = target & 0xFF;
             break;
-        case 1:
+        case 2:
             TxData[2] = (target >> 8) & 0xFF;
             TxData[3] = target & 0xFF;
             break;
-        case 2:
+        case 3:
             TxData[4] = (target >> 8) & 0xFF;
             TxData[5] = target & 0xFF;
             break;
-        case 3:
+        case 4:
             TxData[6] = (target >> 8) & 0xFF;
             TxData[7] = target & 0xFF;
             break;

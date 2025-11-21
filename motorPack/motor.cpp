@@ -24,7 +24,7 @@ void Motor::SetPosition(int target) {
     SetSpeed(pos_pid_.data.output);
 }
 
-void Motor::PosPidInit(float kp, float ki, float kd, float kaw, float max_output) {
+void Motor::PosPidInit(float kp, float ki, float kd, float max_output, float kaw) {
     if (kaw == -1.0f) {
         pos_pid_.Init(kp, ki, kd, ki / kp, max_output);
     } else {
@@ -32,7 +32,7 @@ void Motor::PosPidInit(float kp, float ki, float kd, float kaw, float max_output
     }
 }
 
-void Motor::SpdPidInit(float kp, float ki, float kd, float kaw, float max_output) {
+void Motor::SpdPidInit(float kp, float ki, float kd, float max_output, float kaw) {
     if (kaw == -1.0f) {
         spd_pid_.Init(kp, ki, kd, ki / kp, max_output);
     } else {

@@ -23,6 +23,7 @@ public:
         float target;
         float actual;
         float max_output;
+        float last_output;
     } pid_data_t;
 
     pid_data_t data;

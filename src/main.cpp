@@ -9,6 +9,8 @@
 static const struct gpio_dt_spec led_blue = GPIO_DT_SPEC_GET(DT_ALIAS(led1), gpios);
 int Init() {
     CanInit(chassis_can_dev);
+    CanInit(ptz_can_dev);
+    ptz.Init();
     return 1;
 }
 int a=0;

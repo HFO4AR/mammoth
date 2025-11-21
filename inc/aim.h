@@ -15,8 +15,9 @@ public:
     }
     void Init();
     void SetAngle(float yaw,float pitch);
-protected:
     DjiRm3508 yaw_motor_;
     DjiRm3508 pitch_motor_;
+protected:
+
 };
 #endif //MAMMOTH_AIM_H
