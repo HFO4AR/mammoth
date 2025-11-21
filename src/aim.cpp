@@ -3,6 +3,7 @@
 //
 
 #include "aim.h"
+#include "dji_rm3508.h"
 void PTZ::Init() {
 
 }

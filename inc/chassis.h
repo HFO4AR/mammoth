@@ -11,6 +11,7 @@ using namespace std;
 using namespace Eigen;
 class Chassis {
 public:
+
     float max_speed_;
     float world_x_;
     float world_y_;
@@ -20,12 +21,35 @@ public:
     float world_roll_;
     float max_wheel_rpm_;
     Chassis(float max_rpm):max_wheel_rpm_(max_rpm){};
+
     virtual void SetSpeed();
 };
 class OmniChassis:Chassis {
 public:
+    DjiRm3508 motor_fl_;
+    DjiRm3508 motor_fr_;
+    DjiRm3508 motor_rl_;
+    DjiRm3508 motor_rr_;
+    DjiRm3508* motors[4] = {&motor_fl_, &motor_fr_, &motor_rl_, &motor_rr_};
+    OmniChassis(float width_span, float length_span, float wheel_radius, float max_wheel_rpm,int motor_fl_id,int motor_fr_id,int motor_rl_id,int motor_rr_id,const struct device * can_dev) : Chassis(max_wheel_rpm),
+        wheel_radius_(wheel_radius) ,motor_fl_(motor_fl_id, can_dev), motor_fr_(motor_fr_id,can_dev), motor_rl_(motor_rl_id,can_dev), motor_rr_(motor_rr_id,can_dev){
+    float a = width_span / 2.0f;
+    float b = length_span / 2.0f;
+    float k = a + b; // 几何系数
+
+    // 初始化逆运动学矩阵 (对应 X 型布局)
+    // 顺序: [FL, FR, RL, RR]
+    // 输入: [vx, vy, omega]
+    geometry_matrix_ <<
+            1, -1, -k, // FL: vx - vy - k*w
+            1, 1, k, // FR: vx + vy + k*w
+            1, 1, -k, // RL: vx + vy - k*w
+            1, -1, k; // RR: vx - vy + k*w
+}
     Matrix<float,4,3> geometry_matrix_;
     float wheel_radius_;
+
+
     /**
      * @brief 构造函数，初始化几何矩阵
      * @param width_span  左右轮子中心间距 (Track Width)
@@ -37,21 +61,18 @@ public:
      * @param motor_rl_id   左后电机 ID
      * @param motor_rr_id   右后电机 ID
      */
-    OmniChassis(float width_span, float length_span, float wheel_radius, float max_wheel_rpm,int motor_fl_id,int motor_fr_id,int motor_rl_id,int motor_rr_id) : Chassis(max_wheel_rpm),
-        wheel_radius_(wheel_radius) ,motor_fl(motor_fl_id), motor_fr(motor_fr_id), motor_rl(motor_rl_id), motor_rr(motor_rr_id){
-        float a = width_span / 2.0f;
-        float b = length_span / 2.0f;
-        float k = a + b; // 几何系数
 
-        // 初始化逆运动学矩阵 (对应 X 型布局)
-        // 顺序: [FL, FR, RL, RR]
-        // 输入: [vx, vy, omega]
-        geometry_matrix_ <<
-                1, -1, -k, // FL: vx - vy - k*w
-                1, 1, k, // FR: vx + vy + k*w
-                1, 1, -k, // RL: vx + vy - k*w
-                1, -1, k; // RR: vx - vy + k*w
-    }
+    void MotorInit(float spd_pid_kp, float spd_pid_ki, float spd_pid_kd,float spd_pid_max_output=2000,float pos_pid_kp=0, float pos_pid_ki=0, float pos_pid_kd=0,float pos_pid_max_output=2000);
+    /**
+     * @brief 设置底盘目标速度
+     * @param vx     底盘 X 轴速度 (m/s)
+     * @param vy     底盘 Y 轴速度 (m/s)
+     * @param omega  底盘自转角速度 (rad/s)
+     */
+    void SetSpeed(float vx,float vy,float omega);
+
+
+private:
     /**
      * @brief 逆运动学解算：输入底盘速度，输出电机转速(RPM)
      * @param vx     底盘 X 轴速度 (m/s)
@@ -59,16 +80,8 @@ public:
      * @param omega  底盘自转角速度 (rad/s)
      * @return Vector4f 包含四个轮子的转速 [FL, FR, RL, RR] 单位: RPM
      */
+    Vector4f ComputeInverseKinematics(float vx, float vy, float omega) const;
+    void NormalizeSpeed(Vector4f& rpm) const;
 
-    void SetSpeed();
-
-
-private:
-    Vector4f ComputeInverseKinematics(float vx, float vy, float omega);
-    void NormalizeSpeed(Vector4f& rpm);
-    DjiRm3508 motor_fl;
-    DjiRm3508 motor_fr;
-    DjiRm3508 motor_rl;
-    DjiRm3508 motor_rr;
 };
 #endif //MAMMOTH_CHASSIS_H

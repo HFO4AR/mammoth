@@ -13,6 +13,8 @@
 
 class Motor {
 public:
+    virtual ~Motor() = default;
+
     Motor (const int id):id_(id) {}
     int16_t pos;
     int16_t spd;

@@ -23,14 +23,14 @@
 using namespace std;
 
 
-DjiRm3508 *motor3508_index[4] = {&motor0, &motor1, &motor2, &motor3};
+DjiRm3508 *motor3508_index = chassis.motors;
 
 //can接收函数
 
 
 void GetRm3508Data(can_frame *frame) {
     union rx_data_t {
-        char input[8];
+        char input[8]{};
         struct {
             int16_t pos = 0;
             int16_t spd = 0;
@@ -42,12 +42,12 @@ void GetRm3508Data(can_frame *frame) {
     rx_data_t RxData{};
     memcpy(RxData.input,frame->data,frame->dlc);
     int motor_id = frame->id - 0x200 - 1;
-    motor3508_index[motor_id]->pos = sys_be16_to_cpu(RxData.read.pos);
-    motor3508_index[motor_id]->cur = sys_be16_to_cpu(RxData.read.cur);
-    motor3508_index[motor_id]->spd = sys_be16_to_cpu(RxData.read.spd);
-    motor3508_index[motor_id]->temp = RxData.read.temp;
+    motor3508_index[motor_id].pos = sys_be16_to_cpu(RxData.read.pos);
+    motor3508_index[motor_id].cur = sys_be16_to_cpu(RxData.read.cur);
+    motor3508_index[motor_id].spd = sys_be16_to_cpu(RxData.read.spd);
+    motor3508_index[motor_id].temp = RxData.read.temp;
     if (RxData.read.temp) {
-        motor3508_index[motor_id]->motor_enable_ = MOTOR_ENABLE;
+        motor3508_index[motor_id].motor_enable_ = MOTOR_ENABLE;
     }
 
 }
@@ -55,12 +55,12 @@ void GetRm3508Data(can_frame *frame) {
 //can发送函数
 
 uint8_t TxData[8];
-void DjiRm3508::SendData() {
-    can_frame frame;
+void DjiRm3508::SendData() const {
+    can_frame frame{};
     frame.id=0x200;
     frame.dlc=8;
     memcpy(frame.data, TxData, frame.dlc);
-    can_send(can2, &frame, K_MSEC(100), NULL, NULL);
+    (void)can_send(can_dev_, &frame, K_MSEC(100), NULL, NULL);
     fill_n(TxData, sizeof(TxData), 0); //清空发送缓存
 }
 
@@ -94,6 +94,6 @@ void DjiRm3508::SetCurrentOpenLoop(int target) {
 }
 
 
-void DjiRm3508::EnableSyncSeed() {
+void DjiRm3508::EnableSyncSend() {
     sync_seed_mode_=ENABLE;
 }

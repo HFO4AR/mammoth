@@ -3,7 +3,8 @@
 //
 
 #include "chassis.h"
-Vector4f OmniChassis::ComputeInverseKinematics(float vx, float vy, float omega) {
+#include "dji_rm3508.h"
+Vector4f OmniChassis::ComputeInverseKinematics(float vx, float vy, float omega) const {
     // 1. 构建输入向量 V [3x1]
     Vector3f chassis_vel;
     chassis_vel << vx, vy, omega;
@@ -23,7 +24,7 @@ Vector4f OmniChassis::ComputeInverseKinematics(float vx, float vy, float omega) 
     return wheel_rpm;
 }
 
-void OmniChassis::NormalizeSpeed(Vector4f& rpm) {
+void OmniChassis::NormalizeSpeed(Vector4f& rpm) const {
     float max_val = rpm.cwiseAbs().maxCoeff();//出电机转速向量中绝对值最大的那个转速值
     // 如果超过最大转速，按比例整体缩小
     if (max_val > max_wheel_rpm_) {
@@ -32,16 +33,23 @@ void OmniChassis::NormalizeSpeed(Vector4f& rpm) {
     }
 }
 
-void OmniChassis::SetSpeed() {
-    Vector4f wheel_rpm=ComputeInverseKinematics(world_x_, world_y_, world_yaw_);
-    motor_fl.SetSpeed(wheel_rpm(0));
-    motor_fr.SetSpeed(wheel_rpm(1));
-    motor_rl.SetSpeed(wheel_rpm(2));
-    motor_rr.SetSpeed(wheel_rpm(3));
-    motor_fl.EnableSyncSeed();
-    motor_fr.EnableSyncSeed();
-    motor_rl.EnableSyncSeed();
-    motor_rr.EnableSyncSeed();
-    DjiRm3508::SendData();
-    return;
+void OmniChassis::SetSpeed(float vx,float vy,float omega) {
+    Vector4f wheel_rpm=ComputeInverseKinematics(vx, vy, omega);
+    for (int i = 0; i < 4; i++) {
+        motors[i]->SetSpeed(static_cast<int>(wheel_rpm(i)));
+    }
+    motor_fl_.SendData();//发送数据，4个3508同时发送，使用的是motor_fl的can端口，但四个电机使用的是同一个can
 }
+
+void OmniChassis::MotorInit(float spd_pid_kp, float spd_pid_ki, float spd_pid_kd,float spd_pid_max_output, float pos_pid_kp, float pos_pid_ki,
+                            float pos_pid_kd,float pos_pid_max_output) {
+    for (int i = 0; i < 4; i++) {
+        motors[i]->SpdPidInit(spd_pid_kp, spd_pid_ki, spd_pid_kd);
+        motors[i]->PosPidInit(pos_pid_kp, pos_pid_ki, pos_pid_kd);
+        motors[i]->SetSpeedMaxOutput(spd_pid_max_output);
+        motors[i]->SetPositionMaxOutput(pos_pid_max_output);
+        motors[i]->EnableSyncSend();
+    }
+}
+
+

@@ -7,7 +7,7 @@
 #include "can.h"
 int Init() {
     int ret;
-    CanInit(can2);
+    CanInit(chassis_can_dev);
     return 1;
 }
 

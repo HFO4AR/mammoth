@@ -10,7 +10,7 @@ class PTZ {
 public:
     int max_yaw_angle_;
     int max_pitch_angle_;
-    PTZ(int yaw_motor_id,int pitch_motor_id):yaw_motor_(yaw_motor_id),pitch_motor_(pitch_motor_id) {
+    PTZ(int yaw_motor_id,int pitch_motor_id,const struct device * can_dev):yaw_motor_(yaw_motor_id,can_dev),pitch_motor_(pitch_motor_id,can_dev) {
 
     }
     void Init();
