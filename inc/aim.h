@@ -17,6 +17,8 @@ public:
     void SetAngle(float yaw,float pitch);
     DjiRm3508 yaw_motor_;
     DjiRm3508 pitch_motor_;
+    int yaw_angle_;
+    int pitch_angle_;
 protected:
 
 };
