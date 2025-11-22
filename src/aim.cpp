@@ -14,7 +14,7 @@ void PTZ::Init() {
     bool yaw_init_complete=false;
     while(!pitch_init_complete||!yaw_init_complete){
         if (!pitch_init_complete) {
-            if (abs(pitch_motor_.cur)>800) {
+            if (abs(pitch_motor_.pos-pitch_motor_.last_pos_)<100) {
                 pitch_init_complete=true;
             }else {
                 pitch_motor_.SetSpeed(500);
@@ -22,7 +22,7 @@ void PTZ::Init() {
         }
         k_msleep(10);
         if (!yaw_init_complete) {
-            if (abs(yaw_motor_.cur)>800) {
+            if (abs(yaw_motor_.pos-yaw_motor_.last_pos_)<100) {
                 yaw_init_complete=true;
             }else {
                 yaw_motor_.SetSpeed(500);

@@ -1,0 +1,6 @@
+board:
+  name: bee_stm32f4
+  full_name: BEE STM32F4
+  vendor: bee
+  socs:
+    - name: stm32f407xx

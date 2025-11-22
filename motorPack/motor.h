@@ -20,6 +20,7 @@ public:
     int16_t spd;
     int16_t cur;
     int8_t temp;
+    int16_t last_pos_;
     int motor_enable_ = MOTOR_DISABLE;
 
     Pid pos_pid_;
@@ -49,9 +50,8 @@ protected:
 
     virtual void SetCurrent(int target);//close loop
     const int id_;
-    int32_t total_position_ = 0;
-    int16_t last_position_ = 0;
-    int16_t round_count_ = 0;
+    int32_t total_pos_;
+    int16_t round_count_;
 };
 
 

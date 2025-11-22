@@ -1,0 +1,14 @@
+# Copyright (c) 2025 Your Company
+# SPDX-License-Identifier: Apache-2.0
+
+if BOARD_BEE_STM32F4
+config SOC
+    default "stm32f407xx"
+
+config SOC_SERIES
+    default "stm32f4x"
+
+config BOARD
+    default "bee_stm32f4"
+
+endif # BOARD_BEE_STM32F4

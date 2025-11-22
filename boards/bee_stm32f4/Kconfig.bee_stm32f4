@@ -1,0 +1,8 @@
+# Copyright (c) 2025 Your Company
+# SPDX-License-Identifier: Apache-2.0
+
+config BOARD_BEE_STM32F4
+    bool "BEE STM32F4 board (STM32F407xx)"
+    select SOC_STM32F407XE
+    help
+      Support for the BEE STM32F4 board with STM32F407ZET6 microcontroller

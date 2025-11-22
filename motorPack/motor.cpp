@@ -18,7 +18,7 @@ void Motor::SetSinglePosition(int target) {
 }
 
 void Motor::SetPosition(int target) {
-    pos_pid_.data.actual = total_position_;
+    pos_pid_.data.actual = total_pos_;
     pos_pid_.data.target = target;
     pos_pid_.Compuate();
     SetSpeed(pos_pid_.data.output);
@@ -68,11 +68,11 @@ void Motor::SetCurrent(int target) {
     // motor_enable_ = MOTOR_DISABLE;
 }
 void Motor::UpdateTotalPosition() {
-    if (pos - last_position_ > 4096) {
+    if (pos - last_pos_ > 4096) {
         round_count_--;
-    } else if (pos - last_position_ < -4096) {
+    } else if (pos - last_pos_ < -4096) {
         round_count_++;
     }
-    last_position_ = pos;
-    total_position_ = round_count_ * 8192 + pos;
+    last_pos_ = pos;
+    total_pos_ = round_count_ * 8192 + pos;
 }

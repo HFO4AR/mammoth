@@ -1,7 +1,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 cmake_minimum_required(VERSION 3.20.0)
-
+set(BOARD_ROOT "${CMAKE_SOURCE_DIR}")
+set(BOARD "bee_stm32f4")
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 set(CMAKE_PROJECT_NAME mammoth)

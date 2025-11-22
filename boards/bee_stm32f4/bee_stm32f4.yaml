@@ -1,0 +1,15 @@
+identifier: bee_stm32f4
+name: BEE STM32F4ZET6
+type: mcu
+arch: arm
+toolchain:
+  - zephyr
+  - gnuarmemb
+ram: 128
+flash: 1024
+supported:
+  - can
+  - pwm
+  - counter
+  - adc
+vendor: st

@@ -1,0 +1,160 @@
+/dts-v1/;
+
+#include <st/f4/stm32f407Xe.dtsi>
+#include <zephyr/dt-bindings/gpio/gpio.h>
+#include <zephyr/dt-bindings/pinctrl/stm32-pinctrl.h>
+#include <zephyr/dt-bindings/pwm/stm32_pwm.h>
+
+/ {
+    model = "bee_f407zet6";
+    compatible = "st,stm32f407zet6", "st,stm32f4";
+
+    chosen {
+        zephyr,sram = &sram0;
+        zephyr,flash = &flash0;
+        zephyr,ccm = &ccm0;
+    };
+
+    aliases {
+        led0 = &led_0_red;
+        led1 = &led_1_blue;
+        led2 = &led_2_green;
+        watchdog0 = &iwdg;
+        pwm0 = &tim1_pwm;
+    };
+
+    leds {
+        compatible = "gpio-leds";
+
+        led_0_red: led_0_red {
+            gpios = <&gpioc 1 GPIO_ACTIVE_HIGH>;
+            label = "LED0";
+        };
+
+        led_1_blue: led_1_blue {
+            gpios = <&gpioc 2 GPIO_ACTIVE_HIGH>;
+            label = "LED1";
+        };
+
+        led_2_green: led_2_green {
+            gpios = <&gpioc 3 GPIO_ACTIVE_HIGH>;
+            label = "LED2";
+        };
+    };
+
+};
+
+&clk_lsi {
+    status = "okay";
+};
+
+&clk_hse {
+    clock-frequency = <DT_FREQ_M(12)>;
+    status = "okay";
+};
+
+&pll {
+    div-m = <8>;
+    mul-n = <168>;
+    div-p = <2>;
+    div-q = <8>;
+    clocks = <&clk_hse>;
+    status = "okay";
+};
+
+&rcc {
+    clocks = <&pll>;
+    clock-frequency = <DT_FREQ_M(168)>;
+    ahb-prescaler = <1>;
+    apb1-prescaler = <4>;
+    apb2-prescaler = <2>;
+};
+
+&rtc {
+    clocks = <&rcc STM32_CLOCK(APB1, 28)>, <&rcc STM32_SRC_LSI RTC_SEL(2)>;
+    status = "okay";
+};
+
+&rng {
+    status = "okay";
+};
+
+&iwdg {
+    status = "okay";
+};
+
+&pinctrl {
+    usart1_tx_pin: usart1_tx {
+        pinmux = <STM32_PINMUX('A', 9, AF7)>;
+        bias-disable;
+    };
+    usart1_rx_pin: usart1_rx {
+        pinmux = <STM32_PINMUX('B', 7, AF7)>;
+        bias-disable;
+    };
+
+    can1_tx_pin: can1_tx {
+        pinmux = <STM32_PINMUX('D', 1, AF9)>;
+        bias-disable;
+    };
+    can1_rx_pin: can1_rx {
+        pinmux = <STM32_PINMUX('D', 0, AF9)>;
+        bias-disable;
+    };
+
+    can2_tx_pin: can2_tx {
+        pinmux = <STM32_PINMUX('B', 6, AF9)>;
+        bias-disable;
+    };
+    can2_rx_pin: can2_rx {
+        pinmux = <STM32_PINMUX('B', 5, AF9)>;
+        bias-disable;
+    };
+    tim1_ch4_pin: tim1_ch4{
+        pinmux = <STM32_PINMUX('E', 14, AF1)>;
+    };
+};
+
+&usart1 {
+    pinctrl-0 = <&usart1_tx_pin &usart1_rx_pin>;
+    pinctrl-names = "default";
+    status = "okay";
+    current-speed = <115200>;
+    parity = "none";
+    stop-bits = "1";
+    data-bits = <8>;
+};
+
+&can1 {
+    pinctrl-0 = <&can1_tx_pin &can1_rx_pin>;
+    pinctrl-names = "default";
+    status = "okay";
+    bitrate = <1000000>;  /* 替换 bus-speed */
+    /* 删除 st,can-filter-mask */
+};
+
+&can2 {
+    pinctrl-0 = <&can2_tx_pin &can2_rx_pin>;
+    pinctrl-names = "default";
+    status = "okay";
+    bitrate = <1000000>;  /* 替换 bus-speed */
+    /* 删除 st,can-filter-mask */
+};
+
+&dma1 {
+    status = "okay";
+};
+&dma2 {
+    status = "okay";
+};
+//tim1 ch4
+&timers1{
+    status = "okay";
+    st,prescaler = <1000>;
+    tim1_pwm:pwm{
+        status = "okay";
+        pinctrl-0 = <&tim1_ch4_pin>;
+        pinctrl-names = "default";
+    };
+};
+
