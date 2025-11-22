@@ -7,7 +7,9 @@
 #include <cmath>
 
 #include "dji_rm3508.h"
-void PTZ::Init() {
+
+void PTZ::Init()
+{
     yaw_motor_.SetSpdPid(2,0.1,0.0,2000);
     pitch_motor_.SetSpdPid(1,0.1,0.0,2000);
     bool pitch_init_complete=false;
