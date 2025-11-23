@@ -34,4 +34,5 @@ int main() {
         k_msleep(200);
         a++;
     }
+    return 0;
 }

@@ -13,6 +13,7 @@ public:
         int min_angle;
         int angle;
         int zero_angle;
+        int32_t target;
     }data_t;
 
     PTZ(int yaw_motor_id,int pitch_motor_id,const struct device * can_dev):yaw_motor_(yaw_motor_id,can_dev),pitch_motor_(pitch_motor_id,can_dev) {}

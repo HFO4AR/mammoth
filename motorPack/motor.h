@@ -47,8 +47,10 @@ public:
     virtual void SetPositionDeadband(float val);
 
     int32_t GetTotalPosition();
-protected:
+
     virtual void UpdateTotalPosition();
+protected:
+
 
     virtual void SetCurrent(int target);//close loop
     const int id_;

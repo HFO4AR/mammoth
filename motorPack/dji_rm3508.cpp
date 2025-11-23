@@ -52,6 +52,7 @@ void GetRm3508Data(can_frame *frame) {
     if (RxData.read.temp) {
         motor3508_index[motor_id]->motor_enable_ = MOTOR_ENABLE;
     }
+    motor3508_index[motor_id]->UpdateTotalPosition();
 
 }
 
