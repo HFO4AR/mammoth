@@ -30,7 +30,7 @@ public:
 
     Pid () =default;
     void Compuate();
-    void Init(float kp, float ki, float kd, float kaw, float max_output);
+    void Init(float kp, float ki, float kd, float kaw, float max_output,float deadband);
 
 
 };
