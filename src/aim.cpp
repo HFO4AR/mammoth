@@ -65,8 +65,22 @@ void PTZ::InitMotorDirection(bool is_positive_direction) {
     }
 }
 
+void PTZ::MotorOnlineCheck()
+{
+    while (!pitch_motor_.temp)
+    {
+        k_msleep(10);
+    }
+    printk("pitch在线");
+    while (!yaw_motor_.temp)
+    {
+        k_msleep(10);
+    }
+    printk("yaw在线");
+}
 void PTZ::Init()
 {
+    // MotorOnlineCheck();
     // Positive direction initialization
     InitMotorDirection(true);
     
@@ -76,6 +90,7 @@ void PTZ::Init()
     // Negative direction initialization
     InitMotorDirection(false);
 }
+
 
 void PTZ::SetAngle(float yaw,float pitch)
 {

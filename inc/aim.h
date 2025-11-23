@@ -24,6 +24,7 @@ public:
     
 private:
     void InitMotorDirection(bool is_positive_direction);
+    void MotorOnlineCheck();
 
 };
 #endif //MAMMOTH_AIM_H
