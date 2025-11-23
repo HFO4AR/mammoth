@@ -12,6 +12,7 @@ public:
         int max_angle;
         int min_angle;
         int angle;
+        int zero_angle;
     }data_t;
 
     PTZ(int yaw_motor_id,int pitch_motor_id,const struct device * can_dev):yaw_motor_(yaw_motor_id,can_dev),pitch_motor_(pitch_motor_id,can_dev) {}
@@ -21,6 +22,7 @@ public:
     DjiRm3508 pitch_motor_;
     data_t yaw_data_;
     data_t pitch_data_;
+
     
 private:
     void InitMotorDirection(bool is_positive_direction);
