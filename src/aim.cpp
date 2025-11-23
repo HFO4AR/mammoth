@@ -16,7 +16,7 @@ void PTZ::Init()
     bool yaw_init_complete=false;
     while(!pitch_init_complete||!yaw_init_complete){
         if (!pitch_init_complete) {
-            if (abs(pitch_motor_.spd_pid_.data.Ki_output)>1200) {
+            if (abs(pitch_motor_.spd_pid_.data.output)>1600) {
                 pitch_init_complete=true;
                 pitch_angle_=30;
                 pitch_motor_.SetSpdPid(8,0.1,0.0,5000);
@@ -30,7 +30,7 @@ void PTZ::Init()
         }
         k_msleep(5);
         if (!yaw_init_complete) {
-            if (abs(yaw_motor_.spd_pid_.data.Ki_output)>1200) {
+            if (abs(yaw_motor_.spd_pid_.data.output)>1600) {
                 yaw_init_complete=true;
                 yaw_angle_=30;
                 yaw_motor_.SetSpdPid(8,0.1,0.0,5000);
