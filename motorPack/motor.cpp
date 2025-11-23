@@ -24,19 +24,19 @@ void Motor::SetPosition(int target) {
     SetSpeed(pos_pid_.data.output);
 }
 
-void Motor::SetPosPid(float kp, float ki, float kd, float max_output, float kaw) {
+void Motor::SetPosPid(float kp, float ki, float kd, float max_output,float deadband,float kaw) {
     if (kaw == -1.0f) {
-        pos_pid_.Init(kp, ki, kd, ki / kp, max_output);
+        pos_pid_.Init(kp, ki, kd, ki / kp, max_output,deadband);
     } else {
-        pos_pid_.Init(kp, ki, kd, kaw, max_output);
+        pos_pid_.Init(kp, ki, kd, kaw, max_output,deadband);
     }
 }
 
-void Motor::SetSpdPid(float kp, float ki, float kd, float max_output, float kaw) {
+void Motor::SetSpdPid(float kp, float ki, float kd, float max_output,float deadband, float kaw) {
     if (kaw == -1.0f) {
-        spd_pid_.Init(kp, ki, kd, ki / kp, max_output);
+        spd_pid_.Init(kp, ki, kd, ki / kp, max_output,deadband);
     } else {
-        spd_pid_.Init(kp, ki, kd, kaw, max_output);
+        spd_pid_.Init(kp, ki, kd, kaw, max_output,deadband);
     }
 }
 

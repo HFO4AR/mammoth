@@ -81,7 +81,7 @@ void PTZ::InitMotorDirection(bool is_positive_direction) {
     }
 }
 
-void PTZ::MotorOnlineCheck()
+void PTZ::CheckMotorOnline()
 {
     int time;
     while ((!pitch_motor_.temp&&!yaw_motor_.temp)||time<100)
@@ -103,7 +103,7 @@ void PTZ::MotorOnlineCheck()
 }
 void PTZ::Init()
 {
-    MotorOnlineCheck();
+    CheckMotorOnline();
     // Positive direction initialization
     InitMotorDirection(true);
     
