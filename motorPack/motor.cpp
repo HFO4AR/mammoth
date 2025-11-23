@@ -76,3 +76,7 @@ void Motor::UpdateTotalPosition() {
     last_pos_ = pos;
     total_pos_ = round_count_ * 8192 + pos;
 }
+int32_t Motor::GetTotalPosition()
+{
+    return total_pos_;
+}

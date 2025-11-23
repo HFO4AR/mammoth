@@ -45,6 +45,8 @@ public:
     virtual void SetSpeedDeadband(float val);
 
     virtual void SetPositionDeadband(float val);
+
+    int32_t GetTotalPosition();
 protected:
     virtual void UpdateTotalPosition();
 

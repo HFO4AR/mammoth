@@ -8,17 +8,21 @@
 
 class PTZ {
 public:
-    int max_yaw_angle_;
-    int max_pitch_angle_;
     PTZ(int yaw_motor_id,int pitch_motor_id,const struct device * can_dev):yaw_motor_(yaw_motor_id,can_dev),pitch_motor_(pitch_motor_id,can_dev) {
 
     }
     void Init();
     void SetAngle(float yaw,float pitch);
+    typedef struct
+    {
+        int max_angle;
+        int min_angle;
+        int angle;
+    }data_t;
+    data_t pitch_data_;
+    data_t yaw_data_;
     DjiRm3508 yaw_motor_;
     DjiRm3508 pitch_motor_;
-    int yaw_angle_;
-    int pitch_angle_;
 protected:
 
 };
