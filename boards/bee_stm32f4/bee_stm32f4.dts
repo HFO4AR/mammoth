@@ -21,6 +21,7 @@
         led2 = &led_2_green;
         watchdog0 = &iwdg;
         pwm0 = &tim1_pwm;
+        dbus = &usart3;
     };
 
     leds {
@@ -92,6 +93,18 @@
         pinmux = <STM32_PINMUX('B', 7, AF7)>;
         bias-disable;
     };
+    usart2_tx_pin: usart2_tx {
+        pinmux = <STM32_PINMUX('A', 2, AF7)>;
+        bias-disable;
+    };
+    usart2_rx_pin: usart2_rx {
+        pinmux = <STM32_PINMUX('A', 3, AF7)>;
+        bias-disable;
+    };
+    usart3_rx_pin: usart3_rx {
+        pinmux = <STM32_PINMUX('C', 11, AF7)>;
+        bias-disable;
+    };
 
     can1_tx_pin: can1_tx {
         pinmux = <STM32_PINMUX('D', 1, AF9)>;
@@ -124,7 +137,25 @@
     stop-bits = "1";
     data-bits = <8>;
 };
-
+&usart2 {
+    pinctrl-0 = <&usart2_tx_pin &usart2_rx_pin>;
+    pinctrl-names = "default";
+    status = "okay";
+    current-speed = <115200>;
+    parity = "none";
+    stop-bits = "1";
+    data-bits = <8>;
+};
+&usart3 {
+    pinctrl-0 = <&usart3_rx_pin>;
+    pinctrl-names = "default";
+    status = "okay";
+    current-speed = <115200>;
+    parity = "none";
+    stop-bits = "1";
+    data-bits = <8>;
+    dmas=<&dma1 1 4 0x400 0x03>;//stream 1,channel 4,默认配置,very high优先级
+};
 &can1 {
     pinctrl-0 = <&can1_tx_pin &can1_rx_pin>;
     pinctrl-names = "default";
