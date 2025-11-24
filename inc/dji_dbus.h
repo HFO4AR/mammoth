@@ -3,8 +3,6 @@
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/uart.h>
 #include <cstdint>
-#include <cstring>
-#include <type_traits>
 
 class DjiDbus
 {
