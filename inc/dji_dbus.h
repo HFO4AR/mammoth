@@ -9,11 +9,7 @@ class DjiDbus
 public:
     DjiDbus(const struct device *const dbus_dev);
 
-    // 启动接收
     void ReceivingData();
-
-    // Getter 方法 (从影子副本读取，线程安全)
-
 
 protected:
     const struct device *const dev_;
@@ -46,29 +42,24 @@ protected:
     // 自旋锁：保护 data_shadow_ 的读写原子性
     struct k_spinlock lock_;
 
-    // --- 内部处理逻辑 ---
 
-    // 静态回调函数 (Trampoline)
+    // 静态回调函数
     static void uart_callback(const struct device *dev, struct uart_event *evt, void *user_data);
 
-    // 实际成员处理函数
     void process_event(struct uart_event *evt);
 
 public:
     class Frame {
     private:
-        buffer_t data_; // 这里保存的是副本，不是指针！
+        buffer_t data_;
 
         // 私有构造，只允许 DjiDbus 创建它
         friend class DjiDbus;
         explicit Frame(const buffer_t& raw) : data_(raw) {}
 
     public:
-        // 默认构造函数 (允许用户在 main 里声明变量)
         Frame() = default;
 
-        // --- 这里就是你想要的逻辑封装 ---
-        // 因为 data_ 是本地副本，不需要加锁，也没有位域指针问题
 
         uint16_t ch0() const { return static_cast<int16_t>(data_.read.ch0) - 1024; }
         uint16_t ch1() const { return static_cast<int16_t>(data_.read.ch1) - 1024; }
@@ -79,16 +70,5 @@ public:
         uint8_t  s2()  const { return data_.read.s2; }
     };
 
-    // --------------------------------------------------------
-    // 主接口：获取当前时刻的帧
-    // --------------------------------------------------------
-    Frame GetFrame() {
-        k_spinlock_key_t key = k_spin_lock(&lock_);
-        // 1. 在锁内快速拷贝数据
-        buffer_t temp = data_shadow_;
-        k_spin_unlock(&lock_, key);
-
-        // 2. 返回封装好的对象
-        return Frame(temp);
-    }
+    Frame GetFrame();
 };

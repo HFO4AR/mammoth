@@ -84,3 +84,10 @@ void DjiDbus::process_event(struct uart_event *evt)
     }
 }
 
+DjiDbus::Frame DjiDbus::GetFrame()
+{
+    k_spinlock_key_t key = k_spin_lock(&lock_);
+    buffer_t temp = data_shadow_;
+    k_spin_unlock(&lock_, key);
+    return Frame(temp);
+}
