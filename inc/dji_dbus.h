@@ -9,7 +9,7 @@ class DjiDbus
 public:
     DjiDbus(const struct device *const dbus_dev);
 
-    void ReceivingData();
+    int ReceivingData();
 
 protected:
     const struct device *const dev_;

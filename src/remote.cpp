@@ -16,14 +16,18 @@ void remote_thread_entry(void *p1, void *p2, void *p3)
 {
     while ( true)
     {
+        auto remote_date=dbus.GetFrame();
+        uint16_t ch0=remote_date.ch0();
         k_msleep(10);
-        b++;
+
     }
 
 }
 /****remote thread end*****/
 void RemoteInit()
 {
+    k_msleep(10);
+    int ret=dbus.ReceivingData();
     k_thread_create(&remote_thread_data,
                     remote_stack_area,
                     K_THREAD_STACK_SIZEOF(remote_stack_area),

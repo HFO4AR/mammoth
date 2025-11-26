@@ -16,7 +16,7 @@ DjiDbus::DjiDbus(const struct device *const dbus_dev)
     memset(&data_shadow_, 0, sizeof(data_shadow_));
 }
 
-void DjiDbus::ReceivingData()
+int DjiDbus::ReceivingData()
 {
 
     uart_callback_set(dev_, uart_callback, this);
