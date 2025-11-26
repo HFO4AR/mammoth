@@ -20,8 +20,9 @@
 #include <zephyr/sys/byteorder.h>
 #include "can.h"
 #include <chassis.h>
-
-#include "main.h"
+#include <aim.h>
+extern PTZ ptz;
+extern OmniChassis chassis;
 
 using namespace std;
 
