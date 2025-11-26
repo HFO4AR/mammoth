@@ -84,7 +84,7 @@ void PTZ::InitMotorDirection(bool is_positive_direction) {
 void PTZ::CheckMotorOnline()
 {
     int time;
-    while ((!pitch_motor_.temp&&!yaw_motor_.temp)||time<100)
+    while ((!pitch_motor_.temp_&&!yaw_motor_.temp_)||time<100)
     {
         k_msleep(10);
         time++;
@@ -92,10 +92,10 @@ void PTZ::CheckMotorOnline()
     if (time==100)
     {
         printk("初始化超时：");
-        if (!pitch_motor_.temp)
+        if (!pitch_motor_.temp_)
         {
             printk("pitch离线\n");
-        }else if (!yaw_motor_.temp)
+        }else if (!yaw_motor_.temp_)
         {
             printk("yaw离线\n");
         }

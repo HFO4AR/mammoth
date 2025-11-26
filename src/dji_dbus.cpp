@@ -18,12 +18,15 @@ DjiDbus::DjiDbus(const struct device *const dbus_dev)
 
 int DjiDbus::ReceivingData()
 {
+    if (!device_is_ready(dev_)) {
+        return -1;
+    }
 
     uart_callback_set(dev_, uart_callback, this);
 
     //启动接收，先使用 buf1_
-
-    uart_rx_enable(dev_, buf1_.input, sizeof(buffer_t), SYS_FOREVER_US);
+    int ret = uart_rx_enable(dev_, buf1_.input, sizeof(buffer_t), SYS_FOREVER_US);
+    return ret;
 }
 
 // 静态回调入口

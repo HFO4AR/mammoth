@@ -3,15 +3,18 @@
 //
 
 #include "motor.h"
+
+#include <cmath>
+
 void Motor::SetSpeed(int target) {
-    spd_pid_.data.actual = spd;
+    spd_pid_.data.actual = spd_;
     spd_pid_.data.target = target;
     spd_pid_.Compuate();
     SetCurrent(spd_pid_.data.output);
 }
 
 void Motor::SetSinglePosition(int target) {
-    pos_pid_.data.actual = pos;
+    pos_pid_.data.actual = pos_;
     pos_pid_.data.target = target;
     pos_pid_.Compuate();
     SetSpeed(pos_pid_.data.output);
@@ -68,15 +71,37 @@ void Motor::SetCurrent(int target) {
     // motor_enable_ = MOTOR_DISABLE;
 }
 void Motor::UpdateTotalPosition() {
-    if (pos - last_pos_ > 4096) {
+    if (pos_ - last_pos_ > 4096) {
         round_count_--;
-    } else if (pos - last_pos_ < -4096) {
+    } else if (pos_ - last_pos_ < -4096) {
         round_count_++;
     }
-    last_pos_ = pos;
-    total_pos_ = round_count_ * 8192 + pos;
+    last_pos_ = pos_;
+    total_pos_ = round_count_ * 8192 + pos_;
 }
+
+void Motor::SetMit(float target_pos, float target_spd, float kp, float kd, float t_ff, uint16_t max_output)
+{
+    float output_f = kp * (target_pos - (float)total_pos_) +
+                     kd * (target_spd - (float)spd_) +
+                     t_ff;
+
+    int output = (int)output_f;
+
+    if (output > max_output)
+    {
+        output = max_output;
+    }
+    else if (output < -max_output)
+    {
+        output = -max_output;
+    }
+
+    SetCurrent(output);
+}
+
 int32_t Motor::GetTotalPosition()
 {
     return total_pos_;
 }
+

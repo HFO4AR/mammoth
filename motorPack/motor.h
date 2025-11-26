@@ -16,10 +16,10 @@ public:
     virtual ~Motor() = default;
 
     Motor (const int id):id_(id) {}
-    int16_t pos;
-    int16_t spd;
-    int16_t cur;
-    int8_t temp;
+    int16_t pos_;
+    int16_t spd_;
+    int16_t cur_;
+    int8_t temp_;
     int16_t last_pos_;
     int motor_enable_ = MOTOR_DISABLE;
 
@@ -45,6 +45,8 @@ public:
     virtual void SetSpeedDeadband(float val);
 
     virtual void SetPositionDeadband(float val);
+
+    virtual void SetMit(float target_pos, float target_spd, float kp, float kd, float t_ff,uint16_t max_output);
 
     int32_t GetTotalPosition();
 

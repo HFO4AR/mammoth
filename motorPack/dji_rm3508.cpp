@@ -46,10 +46,10 @@ void GetRm3508Data(can_frame *frame) {
     rx_data_t RxData{};
     memcpy(RxData.input,frame->data,frame->dlc);
     int motor_id = frame->id - 0x200 - 1;
-    motor3508_index[motor_id]->pos = sys_be16_to_cpu(RxData.read.pos);
-    motor3508_index[motor_id]->cur = sys_be16_to_cpu(RxData.read.cur);
-    motor3508_index[motor_id]->spd = sys_be16_to_cpu(RxData.read.spd);
-    motor3508_index[motor_id]->temp = RxData.read.temp;
+    motor3508_index[motor_id]->pos_ = sys_be16_to_cpu(RxData.read.pos);
+    motor3508_index[motor_id]->cur_ = sys_be16_to_cpu(RxData.read.cur);
+    motor3508_index[motor_id]->spd_ = sys_be16_to_cpu(RxData.read.spd);
+    motor3508_index[motor_id]->temp_ = RxData.read.temp;
     if (RxData.read.temp) {
         motor3508_index[motor_id]->motor_enable_ = MOTOR_ENABLE;
     }
