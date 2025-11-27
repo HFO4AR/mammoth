@@ -21,6 +21,8 @@
 #include "can.h"
 #include <chassis.h>
 #include <aim.h>
+#include <motor_music.h>
+extern MotorMusic motor_music;
 extern PTZ ptz;
 extern OmniChassis chassis;
 
@@ -28,7 +30,8 @@ using namespace std;
 
 extern OmniChassis chassis;
 // DjiRm3508 *motor3508_index = *chassis.motors;
-DjiRm3508 *motor3508_index[] = {&ptz.pitch_motor_};
+// DjiRm3508 *motor3508_index[] = {&ptz.pitch_motor_};
+DjiRm3508 *motor3508_index[] = {&motor_music.motor};
 //can接收函数
 
 
