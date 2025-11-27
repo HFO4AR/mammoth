@@ -150,11 +150,12 @@
     pinctrl-0 = <&usart3_rx_pin>;
     pinctrl-names = "default";
     status = "okay";
-    current-speed = <115200>;
-    parity = "none";
+    current-speed = <100000>;
+    parity = "even";
     stop-bits = "1";
     data-bits = <8>;
     dmas=<&dma1 1 4 0x400 0x03>;//stream 1,channel 4,默认配置,very high优先级
+    dma-names = "rx";
 };
 &can1 {
     pinctrl-0 = <&can1_tx_pin &can1_rx_pin>;
