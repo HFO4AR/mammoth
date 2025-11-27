@@ -60,14 +60,18 @@ int MusicInit()
     k_msleep(1000);
     while (true)
     {
-        motor_music.play(mcdonalds_jingle, ARRAY_SIZE(mcdonalds_jingle),125);
-        motor_music.play( windows_xp_startup, ARRAY_SIZE( windows_xp_startup),100);
-        motor_music.play(happy_birthday,ARRAY_SIZE(happy_birthday),125);
-        motor_music.play(happy_birthday_full,ARRAY_SIZE(happy_birthday_full),125);
+        // motor_music.play(mcdonalds_jingle, ARRAY_SIZE(mcdonalds_jingle),125);
+        // motor_music.play( windows_xp_startup, ARRAY_SIZE( windows_xp_startup),100);
+        // motor_music.play(happy_birthday,ARRAY_SIZE(happy_birthday),125);
+        // motor_music.play(happy_birthday_full,ARRAY_SIZE(happy_birthday_full),125);
+        // motor_music.play(haidilao_birthday,ARRAY_SIZE(haidilao_birthday),100);
+        // motor_music.play(cantonese_birthday,ARRAY_SIZE(cantonese_birthday),100);
+        // motor_music.play(hajimi_original,ARRAY_SIZE(hajimi_original),100);
+        // motor_music.play(blue_lotus,ARRAY_SIZE(blue_lotus),125);
+        // motor_music.play(lan_lian_ha,ARRAY_SIZE(lan_lian_ha),100);
         motor_music.play(haidilao_birthday,ARRAY_SIZE(haidilao_birthday),100);
-        motor_music.play(cantonese_birthday,ARRAY_SIZE(cantonese_birthday),100);
-        motor_music.play(hajimi_original,ARRAY_SIZE(hajimi_original),100);
-        motor_music.play(blue_lotus,ARRAY_SIZE(blue_lotus),125);
+        motor_music.play(merry_christmas,ARRAY_SIZE(merry_christmas),100);
+        motor_music.play(jingle_bells,ARRAY_SIZE(jingle_bells),100);
         // motor_music.motor.SetMit(0,0,5,8,0,2000);
         k_msleep(10);
     }
