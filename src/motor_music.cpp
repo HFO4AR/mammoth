@@ -37,11 +37,11 @@ void MotorMusic::play(const Note* musical_score, size_t length,int unit)
         while (k_uptime_get_32() - start_time < duration_ms) {
 
             // 正半周
-            motor.SetMit(lock_pos, 0, 5.0f, 0.5f, (float)volume_, max_cur_);
+            motor.SetMit(lock_pos, 0, 5.0f, 4.0f, (float)volume_, max_cur_);
             k_busy_wait(half_period_us);
 
             // 负半周
-            motor.SetMit(lock_pos, 0, 5.0f, 0.5f, -(float)volume_, max_cur_);
+            motor.SetMit(lock_pos, 0, 5.0f, 4.0f, -(float)volume_, max_cur_);
             k_busy_wait(half_period_us);
         }
 
@@ -54,10 +54,11 @@ void MotorMusic::play(const Note* musical_score, size_t length,int unit)
     k_msleep(1000);
 }
 
-MotorMusic motor_music(1,ptz_can_dev,2000,1800);
+MotorMusic motor_music(1,ptz_can_dev,3000,2500);
 int MusicInit()
 {
     k_msleep(1000);
+    // motor_music.motor.SetMit(0, 0, 5.0f, 8.0f, 0, 2000);
     while (true)
     {
         // motor_music.play(mcdonalds_jingle, ARRAY_SIZE(mcdonalds_jingle),125);
@@ -69,9 +70,13 @@ int MusicInit()
         // motor_music.play(hajimi_original,ARRAY_SIZE(hajimi_original),100);
         // motor_music.play(blue_lotus,ARRAY_SIZE(blue_lotus),125);
         // motor_music.play(lan_lian_ha,ARRAY_SIZE(lan_lian_ha),100);
-        motor_music.play(haidilao_birthday,ARRAY_SIZE(haidilao_birthday),100);
-        motor_music.play(merry_christmas,ARRAY_SIZE(merry_christmas),100);
-        motor_music.play(jingle_bells,ARRAY_SIZE(jingle_bells),100);
+        // motor_music.play(mr_lawrence,ARRAY_SIZE(mr_lawrence),150);
+        motor_music.play(gao_shan_liu_shui,ARRAY_SIZE(gao_shan_liu_shui),100);
+        // motor_music.play(cang_hai_yi_sheng_xiao,ARRAY_SIZE(cang_hai_yi_sheng_xiao),150);
+        motor_music.play(bai_niao_chao_feng,ARRAY_SIZE(bai_niao_chao_feng),80);
+        motor_music.play(nan_er_dang_zi_qiang,ARRAY_SIZE(nan_er_dang_zi_qiang),120);
+        // motor_music.play(merry_christmas,ARRAY_SIZE(merry_christmas),100);
+        // motor_music.play(jingle_bells,ARRAY_SIZE(jingle_bells),120);
         // motor_music.motor.SetMit(0,0,5,8,0,2000);
         k_msleep(10);
     }
