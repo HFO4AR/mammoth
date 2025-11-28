@@ -128,7 +128,6 @@ static const Note happy_birthday[] = {
     {0, 10}
 };
 static const Note happy_birthday_full[] = {
-    // === 第一句：Happy Birthday to You ===
     // (So So La So Do Ti)
     {G4, 1}, {0, 1},  // Hap- (1)
     {G4, 1}, {0, 1},  // py   (1)
@@ -137,7 +136,6 @@ static const Note happy_birthday_full[] = {
     {C5, 2}, {0, 1},  // to   (2)
     {B4, 4}, {0, 2},  // You  (4 - 长音)
 
-    // === 第二句：Happy Birthday to You ===
     // (So So La So Re Do)
     {G4, 1}, {0, 1},  // Hap-
     {G4, 1}, {0, 1},  // py
@@ -146,8 +144,7 @@ static const Note happy_birthday_full[] = {
     {D5, 2}, {0, 1},  // to
     {C5, 4}, {0, 2},  // You (长音)
 
-    // === 第三句：Happy Birthday Dear [Name] (高潮) ===
-    // (So So So(High) Mi Do Ti La) -> 这里的 G5 是全曲最高音
+    // (So So So(High) Mi Do Ti La)
     {G4, 1}, {0, 1},  // Hap-
     {G4, 1}, {0, 1},  // py
     {G5, 2}, {0, 1},  // Birth- (高音!)
@@ -156,8 +153,7 @@ static const Note happy_birthday_full[] = {
     {B4, 2}, {0, 1},  // Na-
     {A4, 4}, {0, 2},  // me (长音)
 
-    // === 第四句：Happy Birthday to You (收尾) ===
-    // (Fa Fa Mi Do Re Do) -> 注意这里用 F5 (Fa)
+    // (Fa Fa Mi Do Re Do)
     {F5, 1}, {0, 1},  // Hap-
     {F5, 1}, {0, 1},  // py
     {E5, 2}, {0, 1},  // Birth-
@@ -165,7 +161,7 @@ static const Note happy_birthday_full[] = {
     {D5, 2}, {0, 1},  // to
     {C5, 6}, {0, 4},  // You (最长结束音)
 
-    // 仪式感：最后留白
+    // 留白
     {0, 10}
 };
 // 海底捞名曲：《对所有的烦恼说 Bye Bye》
