@@ -97,10 +97,12 @@ int MusicInit()
     while (true)
     {
         // motor_music.play(test_chromatic_scale,ARRAY_SIZE(test_chromatic_scale),125);
+        // motor_music.play(happy_birthday,ARRAY_SIZE(happy_birthday),125);
+        // motor_music.play(air_on_g_string,ARRAY_SIZE(air_on_g_string),150);
+        // motor_music.play(canon_in_d, ARRAY_SIZE(canon_in_d),120);
         motor_music.play(mcdonalds_jingle, ARRAY_SIZE(mcdonalds_jingle),125);
         // motor_music.play( windows_xp_startup, ARRAY_SIZE( windows_xp_startup),100);
-        // motor_music.play(happy_birthday,ARRAY_SIZE(happy_birthday),125);
-        // motor_music.play(happy_birthday_full,ARRAY_SIZE(happy_birthday_full),125);
+        motor_music.play(happy_birthday_full,ARRAY_SIZE(happy_birthday_full),125);
         motor_music.play(bach_cello_suite_no1,ARRAY_SIZE(bach_cello_suite_no1),90);
         motor_music.play(bach_minuet_g,ARRAY_SIZE(bach_minuet_g),140);
         // motor_music.play(haidilao_birthday,ARRAY_SIZE(haidilao_birthday),100);
