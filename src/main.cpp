@@ -17,8 +17,8 @@ int Init() {
     CanInit(chassis_can_dev);
     CanInit(ptz_can_dev);
     // ptz.Init();
-    // RemoteInit();
-    MusicInit();
+    RemoteInit();
+    // MusicInit();
     return 1;
 }
 int a=0;

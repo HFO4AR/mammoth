@@ -15,14 +15,18 @@ struct k_thread remote_thread_data;
 int b=0;
 void remote_thread_entry(void *p1, void *p2, void *p3)
 {
-    while ( true)
+    DjiDbus::RemoteData local_rc;
+
+    while (true)
     {
-        auto remote_date=dbus.GetFrame();
-        uint16_t ch0=remote_date.ch0();
+        dbus.GetData(local_rc);
+        if (local_rc.s1 != 0)
+        {
+            printk("CH0: %d, S1: %d\n", local_rc.ch0, local_rc.s1);
+        }
+
         k_msleep(10);
-
     }
-
 }
 /****remote thread end*****/
 void RemoteInit()
