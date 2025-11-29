@@ -96,24 +96,25 @@ int MusicInit()
     // motor_music.motor.SetMit(0, 0, 5.0f, 8.0f, 0, 2000);
     while (true)
     {
-        // motor_music.sweep_test(100,4000,125);
-        motor_music.play(test_chromatic_scale,ARRAY_SIZE(test_chromatic_scale),125);
+        // motor_music.play(test_chromatic_scale,ARRAY_SIZE(test_chromatic_scale),125);
         motor_music.play(mcdonalds_jingle, ARRAY_SIZE(mcdonalds_jingle),125);
-        motor_music.play( windows_xp_startup, ARRAY_SIZE( windows_xp_startup),100);
-        motor_music.play(happy_birthday,ARRAY_SIZE(happy_birthday),125);
-        motor_music.play(happy_birthday_full,ARRAY_SIZE(happy_birthday_full),125);
+        // motor_music.play( windows_xp_startup, ARRAY_SIZE( windows_xp_startup),100);
+        // motor_music.play(happy_birthday,ARRAY_SIZE(happy_birthday),125);
+        // motor_music.play(happy_birthday_full,ARRAY_SIZE(happy_birthday_full),125);
+        motor_music.play(bach_cello_suite_no1,ARRAY_SIZE(bach_cello_suite_no1),90);
+        motor_music.play(bach_minuet_g,ARRAY_SIZE(bach_minuet_g),140);
         // motor_music.play(haidilao_birthday,ARRAY_SIZE(haidilao_birthday),100);
-        motor_music.play(cantonese_birthday,ARRAY_SIZE(cantonese_birthday),100);
-        motor_music.play(hajimi_original,ARRAY_SIZE(hajimi_original),100);
-        motor_music.play(blue_lotus,ARRAY_SIZE(blue_lotus),125);
-        motor_music.play(lan_lian_ha,ARRAY_SIZE(lan_lian_ha),100);
+        // motor_music.play(cantonese_birthday,ARRAY_SIZE(cantonese_birthday),100);
+        // motor_music.play(hajimi_original,ARRAY_SIZE(hajimi_original),100);
+        // motor_music.play(blue_lotus,ARRAY_SIZE(blue_lotus),125);
+        // motor_music.play(lan_lian_ha,ARRAY_SIZE(lan_lian_ha),100);
         motor_music.play(mr_lawrence,ARRAY_SIZE(mr_lawrence),150);
         motor_music.play(gao_shan_liu_shui,ARRAY_SIZE(gao_shan_liu_shui),100);
-        motor_music.play(cang_hai_yi_sheng_xiao,ARRAY_SIZE(cang_hai_yi_sheng_xiao),150);
+        // motor_music.play(cang_hai_yi_sheng_xiao,ARRAY_SIZE(cang_hai_yi_sheng_xiao),150);
         motor_music.play(bai_niao_chao_feng,ARRAY_SIZE(bai_niao_chao_feng),80);
-        motor_music.play(nan_er_dang_zi_qiang,ARRAY_SIZE(nan_er_dang_zi_qiang),120);
+        // motor_music.play(nan_er_dang_zi_qiang,ARRAY_SIZE(nan_er_dang_zi_qiang),120);
         motor_music.play(merry_christmas,ARRAY_SIZE(merry_christmas),100);
-        motor_music.play(jingle_bells,ARRAY_SIZE(jingle_bells),120);
+        // motor_music.play(jingle_bells,ARRAY_SIZE(jingle_bells),120);
         // motor_music.motor.SetMit(0,0,5,8,0,2000);
         k_msleep(10);
     }
