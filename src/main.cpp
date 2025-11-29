@@ -15,7 +15,7 @@ OmniChassis chassis(0.5,0.5,0.15,5000,1,2,3,4,chassis_can_dev);
 PTZ ptz(2,1,ptz_can_dev);
 int Init() {
     CanInit(chassis_can_dev);
-    // CanInit(ptz_can_dev);
+    CanInit(ptz_can_dev);
     ptz.Init();
     RemoteInit();
     // chassis.Init();
