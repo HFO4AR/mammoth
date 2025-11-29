@@ -9,6 +9,7 @@ set(CMAKE_PROJECT_NAME mammoth)
 project(${CMAKE_PROJECT_NAME} LANGUAGES C CXX)
 
 target_sources(app PRIVATE
+#        src/*.cpp
         src/main.cpp
         src/chassis.cpp
         src/shoot_ring.cpp
@@ -19,6 +20,9 @@ target_sources(app PRIVATE
         motorPack/pid.cpp
         src/load_ring.cpp
         src/can.cpp
+        src/dji_dbus.cpp
+        src/async_serial.cpp
+        src/motor_music.cpp
 )
 
 target_include_directories(app PRIVATE inc src motorPack eigen

@@ -7,12 +7,18 @@
 #include "can.h"
 #include <zephyr/drivers/gpio.h>
 #include <load_ring.h>
-static const struct gpio_dt_spec led_blue = GPIO_DT_SPEC_GET(DT_ALIAS(led1), gpios);
 
+#include "remote.h"
+#include "motor_music.h"
+static const struct gpio_dt_spec led_blue = GPIO_DT_SPEC_GET(DT_ALIAS(led1), gpios);
+OmniChassis chassis(0.5,0.5,0.15,5000,1,2,3,4,chassis_can_dev);
+PTZ ptz(2,1,ptz_can_dev);
 int Init() {
     CanInit(chassis_can_dev);
     CanInit(ptz_can_dev);
-    ptz.Init();
+    // ptz.Init();
+    RemoteInit();
+    // MusicInit();
     return 1;
 }
 int a=0;

@@ -13,4 +13,6 @@ public:
     void Update();
 protected:
 };
+
+void RemoteInit();
 #endif //MAMMOTH_REMOTE_H
