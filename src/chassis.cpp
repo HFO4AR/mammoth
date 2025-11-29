@@ -5,7 +5,7 @@
 #include "chassis.h"
 
 #include "can.h"
-#include "dji_rm3508.h"
+#include "dji_m3508.h"
 extern OmniChassis chassis;
 /****remote thread began*****/
 K_THREAD_STACK_DEFINE(chassis_stack_area, 2048);

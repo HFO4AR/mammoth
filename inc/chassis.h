@@ -4,7 +4,7 @@
 
 #ifndef MAMMOTH_CHASSIS_H
 #define MAMMOTH_CHASSIS_H
-#include "dji_rm3508.h"
+#include "dji_m3508.h"
 #include <Eigen/Dense>
 using namespace std;
 using namespace Eigen;
@@ -31,11 +31,11 @@ public:
 };
 class OmniChassis:protected Chassis{
 public:
-    DjiRm3508 motor_fl_;
-    DjiRm3508 motor_fr_;
-    DjiRm3508 motor_rl_;
-    DjiRm3508 motor_rr_;
-    DjiRm3508* motors[4] = {&motor_fl_, &motor_fr_, &motor_rl_, &motor_rr_};
+    DjiM3508 motor_fl_;
+    DjiM3508 motor_fr_;
+    DjiM3508 motor_rl_;
+    DjiM3508 motor_rr_;
+    DjiM3508* motors[4] = {&motor_fl_, &motor_fr_, &motor_rl_, &motor_rr_};
     Matrix<float,4,3> geometry_matrix_;
     float wheel_radius_;
     /**

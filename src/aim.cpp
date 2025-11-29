@@ -6,7 +6,7 @@
 
 #include <cmath>
 
-#include "dji_rm3508.h"
+#include "dji_m3508.h"
 
 #include <zephyr/kernel.h>
 
