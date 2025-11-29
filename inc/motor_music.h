@@ -20,7 +20,7 @@ class MotorMusic {
 public:
     DjiRm3508 motor;
     MotorMusic(int id,const struct device * can_dev,int max_cur,float volume):motor(id,can_dev),max_cur_(max_cur),volume_(volume){}
-
+    void sweep_test(int start_freq, int end_freq, int duration_ms);
     void play(const Note* musical_score, size_t length,int unit);
 protected:
     int max_cur_;
