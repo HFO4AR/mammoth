@@ -9,6 +9,8 @@
 #include "dji_rm3508.h"
 
 #include <zephyr/kernel.h>
+
+#include <dji_dbus.h>
 extern PTZ ptz;
 /***云台线程begain***/
 K_THREAD_STACK_DEFINE(ptz_stack_area, 1024);
@@ -19,6 +21,7 @@ void ptz_thread_entry(void *p1, void *p2, void *p3)
     {
         // ptz.yaw_motor_.SetPosition(ptz.yaw_data_.target);
         // k_msleep(5);
+
         ptz.pitch_motor_.SetPosition(ptz.pitch_data_.target);
         k_msleep(5);
     }

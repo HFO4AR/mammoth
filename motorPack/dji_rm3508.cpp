@@ -68,7 +68,7 @@ void DjiRm3508::SendData() const {
     frame.id=0x200;
     frame.dlc=8;
     memcpy(frame.data, TxData, frame.dlc);
-    (void)can_send(can_dev_, &frame, K_MSEC(100), NULL, NULL);
+    (void)can_send(can_dev_, &frame,K_NO_WAIT, NULL, NULL);
     fill_n(TxData, sizeof(TxData), 0); //清空发送缓存
 }
 

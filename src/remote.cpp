@@ -6,13 +6,17 @@
 #include "dji_dbus.h"
 #include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
+#include <aim.h>
+
+#include "chassis.h"
 const device *const dbus_dev = DEVICE_DT_GET(DT_ALIAS(dbus));
 Remote remote;
 DjiDbus dbus(dbus_dev);
+extern PTZ ptz;
+extern OmniChassis chassis;
 /****remote thread began*****/
 K_THREAD_STACK_DEFINE(remote_stack_area, 1024);
 struct k_thread remote_thread_data;
-int b=0;
 void remote_thread_entry(void *p1, void *p2, void *p3)
 {
     DjiDbus::RemoteData local_rc;
@@ -20,9 +24,36 @@ void remote_thread_entry(void *p1, void *p2, void *p3)
     while (true)
     {
         dbus.GetData(local_rc);
-        if (local_rc.s1 != 0)
+        if (local_rc.s1)//安全检测，s1=0时表明数据接收错误，不进入处理
         {
-            printk("CH0: %d, S1: %d\n", local_rc.ch0, local_rc.s1);
+            if (local_rc.s1==1&&local_rc.s2==1)//手动遥控模式
+            {
+                chassis.SetTargetSpeed(local_rc.ch0,local_rc.ch1,local_rc.ch2);
+            }else if (local_rc.s1==1&&local_rc.s2==2)
+            {
+                break;
+            }else if (local_rc.s1==1&&local_rc.s2==3)
+            {
+                break;
+            }else if (local_rc.s1==2&&local_rc.s2==1)
+            {
+                break;
+            }else if (local_rc.s1==2&&local_rc.s2==2)
+            {
+                break;
+            }else if (local_rc.s1==2&&local_rc.s2==3)
+            {
+                break;
+            }else if (local_rc.s1==3&&local_rc.s2==1)
+            {
+                break;
+            }else if (local_rc.s1==3&&local_rc.s2==2)
+            {
+                break;
+            }else if (local_rc.s1==3&&local_rc.s2==3)
+            {
+                break;
+            }
         }
 
         k_msleep(10);
