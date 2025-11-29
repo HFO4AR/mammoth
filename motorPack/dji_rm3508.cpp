@@ -30,8 +30,8 @@ using namespace std;
 
 extern OmniChassis chassis;
 // DjiRm3508 *motor3508_index = *chassis.motors;
-// DjiRm3508 *motor3508_index[] = {&ptz.pitch_motor_};
-DjiRm3508 *motor3508_index[] = {&motor_music.motor};
+DjiRm3508 *motor3508_index[] = {&ptz.pitch_motor_};
+// DjiRm3508 *motor3508_index[] = {&motor_music.motor};
 //can接收函数
 
 

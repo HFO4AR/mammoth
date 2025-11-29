@@ -152,9 +152,15 @@
     status = "okay";
     current-speed = <100000>;
     parity = "even";
-    stop-bits = "1";
+    stop-bits = "2";
     data-bits = <8>;
-    dmas=<&dma1 1 4 0x400 0x03>;//stream 1,channel 4,默认配置,very high优先级
+    /*
+    * Stream:1
+    * Channel:4
+    * Config:0x10400(RX Memory Inc + Medium Priority)
+    * Features:0
+    */
+    dmas= <&dma1 1 4 0x10480 0>;
     dma-names = "rx";
 };
 &can1 {
