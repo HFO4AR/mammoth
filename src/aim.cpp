@@ -34,7 +34,7 @@ void PTZ::InitMotorDirection(bool is_positive_direction) {
     pitch_motor_.SetSpdPid(1,0.1,0.0,2000);
     bool pitch_init_complete = false;
     bool yaw_init_complete = false;
-    
+
     while(!pitch_init_complete || !yaw_init_complete) {
         // Handle pitch motor initialization
         if (!pitch_init_complete) {
