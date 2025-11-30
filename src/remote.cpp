@@ -9,6 +9,7 @@
 #include <aim.h>
 
 #include "chassis.h"
+
 const device *const dbus_dev = DEVICE_DT_GET(DT_ALIAS(dbus));
 Remote remote;
 DjiDbus dbus(dbus_dev);
@@ -28,31 +29,32 @@ void remote_thread_entry(void *p1, void *p2, void *p3)
         {
             if (local_rc.s1==1&&local_rc.s2==1)//手动遥控模式
             {
-                chassis.SetTargetSpeed(local_rc.ch0,local_rc.ch1,local_rc.ch2);
+                chassis.SetTargetSpeed(local_rc.ch3/10,local_rc.ch2/10,local_rc.ch0/10);
             }else if (local_rc.s1==1&&local_rc.s2==2)
             {
-                break;
+                printk("ch0:%d,ch1:%d,ch2:%d,ch3:%d\n",local_rc.ch0,local_rc.ch1,local_rc.ch2,local_rc.ch3);
+
             }else if (local_rc.s1==1&&local_rc.s2==3)
             {
-                break;
+                continue;
             }else if (local_rc.s1==2&&local_rc.s2==1)
             {
-                break;
+                continue;
             }else if (local_rc.s1==2&&local_rc.s2==2)
             {
-                break;
+                continue;
             }else if (local_rc.s1==2&&local_rc.s2==3)
             {
-                break;
+                continue;
             }else if (local_rc.s1==3&&local_rc.s2==1)
             {
-                break;
+                continue;
             }else if (local_rc.s1==3&&local_rc.s2==2)
             {
-                break;
+                continue;
             }else if (local_rc.s1==3&&local_rc.s2==3)
             {
-                break;
+                continue;
             }
         }
 
