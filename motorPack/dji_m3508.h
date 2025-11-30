@@ -20,10 +20,9 @@ class DjiM3508 :public CanMotor{
 public:
     /**
  * @brief 构造函数
- * @param id 电机ID (1-8)
+ * @param id 电机ID
  * @param can_dev CAN设备指针
  */
-
     DjiM3508(int id, const struct device *can_dev): CanMotor(id, can_dev, DJI_3508_RX_BASE_ID + id) {};
 
     void UpdateFromFrame(struct can_frame *frame) override;
@@ -37,7 +36,6 @@ public:
      */
     static void ProcessCanFrame(const struct device *dev, struct can_frame *frame);
 private:
-    const device * can_dev_;
     bool sync_send_mode_=DISABLE;
 
 };

@@ -2,52 +2,85 @@
 // Created by yuki on 2025/11/30.
 //
 
+
 #include "can_motor.h"
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(can_motor_base, CONFIG_LOG_DEFAULT_LEVEL);
 
-// 初始化静态成员
-CanMotor* CanMotor::registry_[MAX_CAN_MOTORS] = {nullptr};
-int CanMotor::registry_count_ = 0;
+// 初始化静态哈希表 (BSS 段自动清零，默认为 nullptr)
+CanMotor* CanMotor::hash_map_[CAN_HASH_MAP_SIZE] = {nullptr};
 
-CanMotor::CanMotor(int id, const struct device *can_dev, uint32_t rx_id)
-    : Motor(id), can_dev_(can_dev), rx_id_(rx_id)
+CanMotor::CanMotor(int id, const struct device *can_dev, uint32_t rx_id, bool is_extended)
+    : Motor(id), can_dev_(can_dev), rx_id_(rx_id), is_extended_(is_extended)
 {
-    // 自动注册到全局数组
-    if (registry_count_ < MAX_CAN_MOTORS) {
-        registry_[registry_count_] = this;
-        registry_count_++;
-    } else {
-        LOG_ERR("CanMotor registry full!");
-    }
+    RegisterToMap();
 }
 
 CanMotor::~CanMotor() {
-    for (int i = 0; i < registry_count_; i++) {
-        if (registry_[i] == this) {
-            registry_count_--;
-            // 如果要删除的元素不是最后一个，就把最后一个元素搬过来填坑
-            if (i != registry_count_) {
-                registry_[i] = registry_[registry_count_];
-            }
-            registry_[registry_count_] = nullptr;
-            break;
+    uint32_t idx = Hash(rx_id_, can_dev_, is_extended_);
+    int start_idx = idx;
+
+    while (hash_map_[idx] != nullptr) {
+        if (hash_map_[idx] == this) {
+            hash_map_[idx] = nullptr;
+            return;
         }
+        idx = (idx + 1) & (CAN_HASH_MAP_SIZE - 1);
+        if (idx == start_idx) break;
     }
 }
 
-// --- 核心分发逻辑 ---
-void CanMotor::GlobalProcessCanFrame(const struct device *dev, struct can_frame *frame) {
-    // 遍历所有 CAN 电机
-    for (int i = 0; i < registry_count_; i++) {
-        CanMotor *m = registry_[i];
-        if (m == nullptr) continue;
+// 哈希函数：混合 ID、设备名地址、扩展帧标志
+uint32_t CanMotor::Hash(uint32_t rx_id, const struct device *dev, bool is_ext) {
+    uint32_t dev_key = (uint32_t)dev->name;
 
-        // 设备相同 && 反馈ID相同
-        if (m->can_dev_ == dev && m->rx_id_ == frame->id) {
-            // 多态调用：调用具体子类的解析函数
+    uint32_t hash = rx_id ^ dev_key ^ (is_ext ? 0xAAAAAAAA : 0x55555555);
+
+    return hash & (CAN_HASH_MAP_SIZE - 1);
+}
+
+void CanMotor::RegisterToMap() {
+    uint32_t idx = Hash(rx_id_, can_dev_, is_extended_);
+    int start_idx = idx;
+
+    // 线性探测寻找空位
+    while (hash_map_[idx] != nullptr) {
+        idx = (idx + 1) & (CAN_HASH_MAP_SIZE - 1);
+
+        if (idx == start_idx) {
+            LOG_ERR("CanMotor Hash Map FULL! Increase CAN_HASH_MAP_SIZE.");
+            return;
+        }
+    }
+
+    hash_map_[idx] = this;
+}
+
+void CanMotor::GlobalProcessCanFrame(const struct device *dev, struct can_frame *frame) {
+    bool is_ext = (frame->flags & CAN_FRAME_IDE) != 0;
+
+    uint32_t idx = Hash(frame->id, dev, is_ext);
+    int start_idx = idx;
+
+    while (true) {
+        CanMotor *m = hash_map_[idx];
+
+        if (m == nullptr) {
+            return;
+        }
+
+        if (m->rx_id_ == frame->id &&
+            m->is_extended_ == is_ext &&
+            m->can_dev_->name == dev->name)
+        {
             m->UpdateFromFrame(frame);
+            return;
+        }
+
+        idx = (idx + 1) & (CAN_HASH_MAP_SIZE - 1);
+
+        if (idx == start_idx) {
             return;
         }
     }

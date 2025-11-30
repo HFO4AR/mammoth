@@ -23,7 +23,7 @@ target_sources(app PRIVATE
         src/can.cpp
         src/dji_dbus.cpp
         src/async_serial.cpp
-        src/motor_music.cpp
+#        src/motor_music.cpp
 )
 
 target_include_directories(app PRIVATE inc src motorPack eigen

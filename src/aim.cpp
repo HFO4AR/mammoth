@@ -13,7 +13,7 @@
 #include <dji_dbus.h>
 extern PTZ ptz;
 /***云台线程begain***/
-K_THREAD_STACK_DEFINE(ptz_stack_area, 1024);
+K_THREAD_STACK_DEFINE(ptz_stack_area, 4096);
 struct k_thread ptz_thread_data;
 void ptz_thread_entry(void *p1, void *p2, void *p3)
 {
