@@ -12,16 +12,16 @@
 // 一个 Handler 对应一个物理 CAN 口 (如 CAN1)
 class DjiBusHandler {
 public:
-    // DjiBusHandler() : dev_(nullptr) {
+    // DjiBusHandler(int id_low, int id_high): id_low_(id_low), id_high_(id_high){
     //     memset(buf_low_, 0, 8);
     //     memset(buf_high_, 0, 8);
     // }
 
     // 初始化绑定设备
-    void Init(const struct device *dev,int id_low, int id_high){
-        id_high_=id_high;
-        id_low_=id_low;
+    void Init(const struct device *dev, int id_low, int id_high){
         dev_ = dev;
+        low_tx_id_ = id_low;
+        high_tx_id_ = id_high;
         memset(buf_low_, 0, 8);
         memset(buf_high_, 0, 8);
     }
@@ -54,18 +54,18 @@ public:
         frame.dlc = 8;
 
         if (low_group) {
-            frame.id = id_low_;
+            frame.id = low_tx_id_;
             memcpy(frame.data, buf_low_, 8);
         } else {
-            frame.id = id_high_;
+            frame.id = high_tx_id_;
             memcpy(frame.data, buf_high_, 8);
         }
         (void)can_send(dev_, &frame, K_NO_WAIT, NULL, NULL);
     }
 
 private:
-    int8_t id_high_;
-    int8_t id_low_;
+    int low_tx_id_;
+    int high_tx_id_;
     const struct device *dev_;
     uint8_t buf_low_[8];  // ID 1-4
     uint8_t buf_high_[8]; // ID 5-8

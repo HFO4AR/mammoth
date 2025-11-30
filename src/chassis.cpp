@@ -71,7 +71,7 @@ void OmniChassis::SetSpeed() {
     //     printk("chassis can device is not ready\n");
     // }else
     // {
-    //     motor_fl_.SendData();//发送数据，4个3508同时发送，使用的是motor_fl的can端口，但四个电机使用的是同一个can
+    motor_fl_.SendData();//发送数据，4个3508同时发送，使用的是motor_fl的can端口，但四个电机使用的是同一个can
     // }
 
 }
@@ -83,7 +83,7 @@ void OmniChassis::MotorInit(float spd_pid_kp, float spd_pid_ki, float spd_pid_kd
         motors[i]->SetPosPid(pos_pid_kp, pos_pid_ki, pos_pid_kd);
         motors[i]->SetSpeedMaxOutput(spd_pid_max_output);
         motors[i]->SetPositionMaxOutput(pos_pid_max_output);
-        // motors[i]->EnableSyncSend();
+        motors[i]->EnableSyncSend();
     }
 }
 

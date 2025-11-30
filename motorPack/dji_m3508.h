@@ -30,14 +30,18 @@ public:
     void SendData() const;
     void SetCurrentOpenLoop(int target) override;//open loop
     void EnableSyncSend();
+    static int low_tx_id_;
+    static int high_tx_id_;
 private:
     bool sync_send_mode_=DISABLE;
-    // 指向该电机归属的总线处理器 (运行时 O(1) 访问)
+    // 指向该电机归属的总线处理器
     DjiBusHandler *my_handler_ = nullptr;
 
     // --- 静态资源池 ---
     // 自动管理所有 CAN 口的拼包缓存
     static DjiBusHandler bus_pool_[MAX_CAN_BUS_COUNT];
+
+
 
 };
 

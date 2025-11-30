@@ -65,11 +65,13 @@ void DjiM3508::SendData() const {
 void DjiM3508::SetCurrentOpenLoop(int target) {
     target_current_ = target;
 
-    if (my_handler_)
+    if (my_handler_&&sync_send_mode_)
     {
         my_handler_->Update(id_, target);
+    }else
+    {
+        SendData();
     }
-    SendData();
 }
 
 
@@ -82,12 +84,12 @@ void DjiM3508::UpdateFromFrame(struct can_frame *frame) {
     this->spd_ = sys_get_be16(&frame->data[2]);
     this->cur_ = sys_get_be16(&frame->data[4]);
     this->temp_ = frame->data[6];
-    this->motor_enable_ = MOTOR_ENABLE;
+    this->motor_enable_ = true;
     this->UpdateTotalPosition();
 }
 
 DjiM3508::DjiM3508(int id, const struct device *can_dev)
-    : CanMotor(id, can_dev, DJI_3508_RX_BASE_ID + id, false) // 初始化基类
+    : CanMotor(id, can_dev, DJI_3508_RX_BASE_ID + id, false)// 初始化基类
 {
     for (int i = 0; i < MAX_CAN_BUS_COUNT; i++) {
         if (bus_pool_[i].Match(can_dev)) {
@@ -98,7 +100,7 @@ DjiM3508::DjiM3508(int id, const struct device *can_dev)
 
     for (int i = 0; i < MAX_CAN_BUS_COUNT; i++) {
         if (bus_pool_[i].IsFree()) {
-            bus_pool_[i].Init(can_dev,DJI_3508_TX_ID_LOW,DJI_3508_TX_ID_HIGH); // 初始化
+            bus_pool_[i].Init(can_dev, DJI_3508_TX_ID_LOW, DJI_3508_TX_ID_HIGH); // 初始化
             my_handler_ = &bus_pool_[i]; // 绑定
             return;
         }

@@ -8,8 +8,6 @@
 
 #include "pid.h"
 #include <cstdint>
-#define MOTOR_ENABLE 1
-#define MOTOR_DISABLE 0
 
 class Motor {
 public:
@@ -22,7 +20,7 @@ public:
     int8_t temp_;
     int16_t last_pos_;
     int16_t target_current_;
-    int motor_enable_ = MOTOR_DISABLE;
+    int motor_enable_ =true;
 
     Pid pos_pid_;
     Pid spd_pid_;
