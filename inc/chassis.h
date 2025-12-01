@@ -58,11 +58,12 @@ public:
     // 初始化逆运动学矩阵 (对应 X 型布局)
     // 顺序: [FL, FR, RL, RR]
     // 输入: [vx, vy, omega]
+
     geometry_matrix_ <<
-            1, -1, -k, // FL: vx - vy - k*w
-            1, 1, k, // FR: vx + vy + k*w
-            1, 1, -k, // RL: vx + vy - k*w
-            1, -1, k; // RR: vx - vy + k*w
+            1, 1, k, // FL: vx - vy - k*w
+            -1, 1, k, // FR: vx + vy + k*w
+            1, -1, k, // RL: vx + vy - k*w
+            -1, -1, k; // RR: vx - vy + k*w
 }
 
     void MotorInit(float spd_pid_kp, float spd_pid_ki, float spd_pid_kd,float spd_pid_max_output=2000,float pos_pid_kp=0, float pos_pid_ki=0, float pos_pid_kd=0,float pos_pid_max_output=2000);

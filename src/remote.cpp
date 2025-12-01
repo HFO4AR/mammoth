@@ -56,6 +56,9 @@ void remote_thread_entry(void *p1, void *p2, void *p3)
             {
                 continue;
             }
+        }else
+        {
+            chassis.SetTargetSpeed(0,0,0);
         }
 
         k_msleep(10);

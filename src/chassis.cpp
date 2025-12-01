@@ -24,7 +24,7 @@ void chassis_thread_entry(void *p1, void *p2, void *p3)
 int OmniChassis::Init()
 {
     k_msleep(10);
-    MotorInit(0.5,0.01,0.5,2000,0.5,0.01,0.5,2000);
+    MotorInit(3,0.5,0,5000,0.5,0.01,0.5,2000);
     SetTargetSpeed(0,0,0);
     k_thread_create(&chassis_thread_data,
                 chassis_stack_area,
