@@ -16,13 +16,14 @@ target_sources(app PRIVATE
         src/aim.cpp
         src/remote.cpp
         motorPack/motor.cpp
-        motorPack/dji_rm3508.cpp
+        motorPack/can_motor.cpp
+        motorPack/dji_m3508.cpp
         motorPack/pid.cpp
         src/load_ring.cpp
         src/can.cpp
         src/dji_dbus.cpp
         src/async_serial.cpp
-        src/motor_music.cpp
+#        src/motor_music.cpp
 )
 
 target_include_directories(app PRIVATE inc src motorPack eigen

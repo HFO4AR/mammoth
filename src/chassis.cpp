@@ -3,7 +3,36 @@
 //
 
 #include "chassis.h"
-#include "dji_rm3508.h"
+
+#include "can.h"
+#include "dji_m3508.h"
+extern OmniChassis chassis;
+/****remote thread began*****/
+K_THREAD_STACK_DEFINE(chassis_stack_area, 2048);
+struct k_thread chassis_thread_data;
+int b=0;
+void chassis_thread_entry(void *p1, void *p2, void *p3)
+{
+    while (true)
+    {
+        chassis.SetSpeed();
+        k_msleep(10);
+    }
+}
+/****remote thread end*****/
+
+int OmniChassis::Init()
+{
+    k_msleep(10);
+    MotorInit(3,0.5,0,5000,0.5,0.01,0.5,2000);
+    SetTargetSpeed(0,0,0);
+    k_thread_create(&chassis_thread_data,
+                chassis_stack_area,
+                K_THREAD_STACK_SIZEOF(chassis_stack_area),
+                chassis_thread_entry,
+                NULL,NULL,NULL,
+                5, 0,K_NO_WAIT);
+}
 Vector4f OmniChassis::ComputeInverseKinematics(float vx, float vy, float omega) const {
     // 1. 构建输入向量 V [3x1]
     Vector3f chassis_vel;
@@ -33,12 +62,18 @@ void OmniChassis::NormalizeSpeed(Vector4f& rpm) const {
     }
 }
 
-void OmniChassis::SetSpeed(float vx,float vy,float omega) {
-    Vector4f wheel_rpm=ComputeInverseKinematics(vx, vy, omega);
+void OmniChassis::SetSpeed() {
+    Vector4f wheel_rpm=ComputeInverseKinematics(target_vx_, target_vy_, target_omega_);
     for (int i = 0; i < 4; i++) {
         motors[i]->SetSpeed(static_cast<int>(wheel_rpm(i)));
     }
+    // if (!device_is_ready(chassis_can_dev)) {
+    //     printk("chassis can device is not ready\n");
+    // }else
+    // {
     motor_fl_.SendData();//发送数据，4个3508同时发送，使用的是motor_fl的can端口，但四个电机使用的是同一个can
+    // }
+
 }
 
 void OmniChassis::MotorInit(float spd_pid_kp, float spd_pid_ki, float spd_pid_kd,float spd_pid_max_output, float pos_pid_kp, float pos_pid_ki,
@@ -50,6 +85,13 @@ void OmniChassis::MotorInit(float spd_pid_kp, float spd_pid_ki, float spd_pid_kd
         motors[i]->SetPositionMaxOutput(pos_pid_max_output);
         motors[i]->EnableSyncSend();
     }
+}
+
+void OmniChassis::SetTargetSpeed(float vx,float vy,float omega)
+{
+    target_vx_=vx;
+    target_vy_=vy;
+    target_omega_=omega;
 }
 
 

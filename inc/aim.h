@@ -4,7 +4,7 @@
 
 #ifndef MAMMOTH_AIM_H
 #define MAMMOTH_AIM_H
-#include "dji_rm3508.h"
+#include "dji_m3508.h"
 
 class PTZ {
 public:
@@ -19,8 +19,8 @@ public:
     PTZ(int yaw_motor_id,int pitch_motor_id,const struct device * can_dev):yaw_motor_(yaw_motor_id,can_dev),pitch_motor_(pitch_motor_id,can_dev) {}
     void Init();
     void SetAngle(float yaw,float pitch);
-    DjiRm3508 yaw_motor_;
-    DjiRm3508 pitch_motor_;
+    DjiM3508 yaw_motor_;
+    DjiM3508 pitch_motor_;
     data_t yaw_data_;
     data_t pitch_data_;
 

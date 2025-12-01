@@ -8,8 +8,6 @@
 
 #include "pid.h"
 #include <cstdint>
-#define MOTOR_ENABLE 1
-#define MOTOR_DISABLE 0
 
 class Motor {
 public:
@@ -21,11 +19,12 @@ public:
     int16_t cur_;
     int8_t temp_;
     int16_t last_pos_;
-    int motor_enable_ = MOTOR_DISABLE;
+    int16_t target_current_;
+    int motor_enable_ =true;
 
     Pid pos_pid_;
     Pid spd_pid_;
-
+    const int id_;
     virtual void SetSpdPid(float kp, float ki, float kd, float max_output=1000.0f, float deadband=0,float kaw=-1.0f);
 
     virtual void SetPosPid(float kp, float ki, float kd, float max_output=1000.0f, float deadband=0,float kaw=-1.0f);
@@ -55,7 +54,7 @@ protected:
 
 
     virtual void SetCurrent(int target);//close loop
-    const int id_;
+
     int32_t total_pos_;
     int16_t round_count_;
 };

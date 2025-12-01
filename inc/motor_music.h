@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "motor.h"
-#include "dji_rm3508.h"
+#include "dji_m3508.h"
 #include "can.h"
 struct Note {
     uint16_t frequency; // 频率
@@ -18,7 +18,7 @@ struct Note {
 int MusicInit();
 class MotorMusic {
 public:
-    DjiRm3508 motor;
+    DjiM3508 motor;
     MotorMusic(int id,const struct device * can_dev,int max_cur,float volume):motor(id,can_dev),max_cur_(max_cur),volume_(volume){}
 
     void play(const Note* musical_score, size_t length,int unit);

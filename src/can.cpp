@@ -3,10 +3,11 @@
 //
 
 #include "can.h"
-#include "dji_rm3508.h"
+#include "can_motor.h"
 void CanRxCallback(const struct device *dev, struct can_frame *frame,
-                     void *user_data) {
-    GetRm3508Data(frame);
+                   void *user_data) {
+    // GetRm3508Data(frame);
+    CanMotor::GlobalProcessCanFrame(dev, frame);
 }
 
 void CanInit(const struct device *can_id) {

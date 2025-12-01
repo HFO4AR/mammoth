@@ -65,8 +65,10 @@ void Motor::SetCurrentOpenLoop(int target) {
 void Motor::SetCurrent(int target) {
     if (motor_enable_) {
         SetCurrentOpenLoop(target);
+        // motor_enable_ = false;
     }else {
         SetCurrentOpenLoop(0);
+        return;
     }
     // motor_enable_ = MOTOR_DISABLE;
 }

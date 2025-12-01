@@ -69,9 +69,9 @@ void DjiDbus::process_event(struct uart_event *evt)
     }
 }
 
-// 纯粹的解析逻辑，不涉及锁
 void DjiDbus::parse_raw_to_struct(const uint8_t* ptr, RemoteData& target)
 {
+    //摇杆
     target.ch0 = ((ptr[0] | (ptr[1] << 8)) & 0x07FF) - 1024;
     target.ch1 = (((ptr[1] >> 3) | (ptr[2] << 5)) & 0x07FF) - 1024;
     target.ch2 = (((ptr[2] >> 6) | (ptr[3] << 2) | (ptr[4] << 10)) & 0x07FF) - 1024;

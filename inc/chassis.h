@@ -4,7 +4,7 @@
 
 #ifndef MAMMOTH_CHASSIS_H
 #define MAMMOTH_CHASSIS_H
-#include "dji_rm3508.h"
+#include "dji_m3508.h"
 #include <Eigen/Dense>
 using namespace std;
 using namespace Eigen;
@@ -20,15 +20,22 @@ public:
     float world_yaw_;
     float world_pitch_;
     float world_roll_;
+    float vx_;
+    float vy_;
+    float yaw_;
+    //目标
+    float target_vx_;
+    float target_vy_;
+    float target_omega_;
     virtual void SetSpeed() {}
 };
-class OmniChassis:Chassis {
+class OmniChassis:protected Chassis{
 public:
-    DjiRm3508 motor_fl_;
-    DjiRm3508 motor_fr_;
-    DjiRm3508 motor_rl_;
-    DjiRm3508 motor_rr_;
-    DjiRm3508* motors[4] = {&motor_fl_, &motor_fr_, &motor_rl_, &motor_rr_};
+    DjiM3508 motor_fl_;
+    DjiM3508 motor_fr_;
+    DjiM3508 motor_rl_;
+    DjiM3508 motor_rr_;
+    DjiM3508* motors[4] = {&motor_fl_, &motor_fr_, &motor_rl_, &motor_rr_};
     Matrix<float,4,3> geometry_matrix_;
     float wheel_radius_;
     /**
@@ -51,23 +58,26 @@ public:
     // 初始化逆运动学矩阵 (对应 X 型布局)
     // 顺序: [FL, FR, RL, RR]
     // 输入: [vx, vy, omega]
+
     geometry_matrix_ <<
-            1, -1, -k, // FL: vx - vy - k*w
-            1, 1, k, // FR: vx + vy + k*w
-            1, 1, -k, // RL: vx + vy - k*w
-            1, -1, k; // RR: vx - vy + k*w
+            1, 1, k, // FL: vx - vy - k*w
+            -1, 1, k, // FR: vx + vy + k*w
+            1, -1, k, // RL: vx + vy - k*w
+            -1, -1, k; // RR: vx - vy + k*w
 }
 
     void MotorInit(float spd_pid_kp, float spd_pid_ki, float spd_pid_kd,float spd_pid_max_output=2000,float pos_pid_kp=0, float pos_pid_ki=0, float pos_pid_kd=0,float pos_pid_max_output=2000);
+    //实际底盘速度发送函数
+    void SetSpeed();
     /**
-     * @brief 设置底盘目标速度
+     * @brief 设置底盘目标速度，此接口用于供遥控器调用
      * @param vx     底盘 X 轴速度 (m/s)
      * @param vy     底盘 Y 轴速度 (m/s)
      * @param omega  底盘自转角速度 (rad/s)
      */
-    void SetSpeed(float vx,float vy,float omega);
+    void SetTargetSpeed(float vx,float vy,float omega);
 
-
+    int Init();
 private:
     /**
      * @brief 逆运动学解算：输入底盘速度，输出电机转速(RPM)

@@ -6,12 +6,6 @@
 #define MAMMOTH_REMOTE_H
 class Remote {
 public:
-    int ch1;
-    int ch2;
-    int ch3;
-    int ch4;
-    void Update();
-protected:
 };
 
 void RemoteInit();
