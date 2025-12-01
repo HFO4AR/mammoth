@@ -13,9 +13,8 @@
 #include <dji_dbus.h>
 extern PTZ ptz;
 /***云台线程begain***/
-K_THREAD_STACK_DEFINE(ptz_stack_area, 4096);
-struct k_thread ptz_thread_data;
-void ptz_thread_entry(void *p1, void *p2, void *p3)
+
+void PTZ::ThreadEntry(void *p1, void *p2, void *p3)
 {
     while (true)
     {
@@ -126,14 +125,12 @@ void PTZ::Init()
     pitch_motor_.SetPosPid(0.5,0,4,500);
     //云台线程初始化
     k_msleep(1000);
-    k_thread_create(&ptz_thread_data,
-                    ptz_stack_area,
-                    K_THREAD_STACK_SIZEOF(ptz_stack_area),
-                    ptz_thread_entry,
-                    NULL, NULL, NULL,
-                    5,
-                    0,
-                    K_NO_WAIT);
+    k_thread_create(&thread_data_,
+                stack_,
+                stack_size_,
+                ThreadEntry,
+                this,NULL,NULL,
+                5, 0,K_NO_WAIT);
     printk("云台初始化完成\n");
 }
 

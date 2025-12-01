@@ -54,31 +54,49 @@ void MotorMusic::play(const Note* musical_score, size_t length,int unit)
     k_msleep(1000);
 }
 
-MotorMusic motor_music(1,ptz_can_dev,3000,2500);
-int MusicInit()
+/****remote thread began*****/
+
+void ThreadEntry(void *p1, void *p2, void *p3)
 {
-    k_msleep(1000);
-    // motor_music.motor.SetMit(0, 0, 5.0f, 8.0f, 0, 2000);
+    MotorMusic *self = static_cast<MotorMusic*>(p1);
     while (true)
     {
-        // motor_music.play(mcdonalds_jingle, ARRAY_SIZE(mcdonalds_jingle),125);
-        // motor_music.play( windows_xp_startup, ARRAY_SIZE( windows_xp_startup),100);
-        // motor_music.play(happy_birthday,ARRAY_SIZE(happy_birthday),125);
-        // motor_music.play(happy_birthday_full,ARRAY_SIZE(happy_birthday_full),125);
-        // motor_music.play(haidilao_birthday,ARRAY_SIZE(haidilao_birthday),100);
-        // motor_music.play(cantonese_birthday,ARRAY_SIZE(cantonese_birthday),100);
-        // motor_music.play(hajimi_original,ARRAY_SIZE(hajimi_original),100);
-        // motor_music.play(blue_lotus,ARRAY_SIZE(blue_lotus),125);
-        // motor_music.play(lan_lian_ha,ARRAY_SIZE(lan_lian_ha),100);
-        // motor_music.play(mr_lawrence,ARRAY_SIZE(mr_lawrence),150);
-        motor_music.play(gao_shan_liu_shui,ARRAY_SIZE(gao_shan_liu_shui),100);
-        // motor_music.play(cang_hai_yi_sheng_xiao,ARRAY_SIZE(cang_hai_yi_sheng_xiao),150);
-        motor_music.play(bai_niao_chao_feng,ARRAY_SIZE(bai_niao_chao_feng),80);
-        motor_music.play(nan_er_dang_zi_qiang,ARRAY_SIZE(nan_er_dang_zi_qiang),120);
-        // motor_music.play(merry_christmas,ARRAY_SIZE(merry_christmas),100);
-        // motor_music.play(jingle_bells,ARRAY_SIZE(jingle_bells),120);
+        // self->play(mcdonalds_jingle, ARRAY_SIZE(mcdonalds_jingle),125);
+        // self->play( windows_xp_startup, ARRAY_SIZE( windows_xp_startup),100);
+        // self->play(happy_birthday,ARRAY_SIZE(happy_birthday),125);
+        // self->play(happy_birthday_full,ARRAY_SIZE(happy_birthday_full),125);
+        // self->play(haidilao_birthday,ARRAY_SIZE(haidilao_birthday),100);
+        // self->play(cantonese_birthday,ARRAY_SIZE(cantonese_birthday),100);
+        // self->play(hajimi_original,ARRAY_SIZE(hajimi_original),100);
+        // self->play(blue_lotus,ARRAY_SIZE(blue_lotus),125);
+        // self->play(lan_lian_ha,ARRAY_SIZE(lan_lian_ha),100);
+        // self->play(mr_lawrence,ARRAY_SIZE(mr_lawrence),150);
+        self->play(gao_shan_liu_shui,ARRAY_SIZE(gao_shan_liu_shui),100);
+        // self->play(cang_hai_yi_sheng_xiao,ARRAY_SIZE(cang_hai_yi_sheng_xiao),150);
+        self->play(bai_niao_chao_feng,ARRAY_SIZE(bai_niao_chao_feng),80);
+        self->play(nan_er_dang_zi_qiang,ARRAY_SIZE(nan_er_dang_zi_qiang),120);
+        // self->play(merry_christmas,ARRAY_SIZE(merry_christmas),100);
+        // self->play(jingle_bells,ARRAY_SIZE(jingle_bells),120);
         // motor_music.motor.SetMit(0,0,5,8,0,2000);
         k_msleep(10);
     }
+}
+/****remote thread end*****/
+K_THREAD_STACK_DEFINE(motor_music_stack_area, 2048);
+MotorMusic motor_music(8, ptz_can_dev, 3000, 2500, motor_music_stack_area,
+                       K_THREAD_STACK_SIZEOF(motor_music_stack_area));
+int MotorMusic::Init()
+{
+    k_msleep(1000);
+    // motor_music.motor.SetMit(0, 0, 5.0f, 8.0f, 0, 2000);
+    k_thread_create(&thread_data_,
+                stack_,
+                stack_size_,
+                ThreadEntry,
+                this,NULL,NULL,
+                8, 0,K_NO_WAIT);
+    return 1;
+
+
     // k_thread_create()
 }

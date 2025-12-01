@@ -8,14 +8,12 @@
 #include "dji_m3508.h"
 extern OmniChassis chassis;
 /****remote thread began*****/
-K_THREAD_STACK_DEFINE(chassis_stack_area, 2048);
-struct k_thread chassis_thread_data;
-int b=0;
-void chassis_thread_entry(void *p1, void *p2, void *p3)
+void OmniChassis::ThreadEntry(void *p1, void *p2, void *p3)
 {
+    OmniChassis *self=static_cast<OmniChassis*>(p1);
     while (true)
     {
-        chassis.SetSpeed();
+        self->SetSpeed();
         k_msleep(10);
     }
 }
@@ -26,12 +24,13 @@ int OmniChassis::Init()
     k_msleep(10);
     MotorInit(3,0.5,0,5000,0.5,0.01,0.5,2000);
     SetTargetSpeed(0,0,0);
-    k_thread_create(&chassis_thread_data,
-                chassis_stack_area,
-                K_THREAD_STACK_SIZEOF(chassis_stack_area),
-                chassis_thread_entry,
-                NULL,NULL,NULL,
+    k_thread_create(&thread_data_,
+                stack_,
+                stack_size_,
+                ThreadEntry,
+                this,NULL,NULL,
                 5, 0,K_NO_WAIT);
+    return 1;
 }
 Vector4f OmniChassis::ComputeInverseKinematics(float vx, float vy, float omega) const {
     // 1. 构建输入向量 V [3x1]

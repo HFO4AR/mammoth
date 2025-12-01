@@ -49,8 +49,8 @@ public:
      * @param motor_rl_id   左后电机 ID
      * @param motor_rr_id   右后电机 ID
      */
-    OmniChassis(float width_span, float length_span, float wheel_radius, float max_wheel_rpm,int motor_fl_id,int motor_fr_id,int motor_rl_id,int motor_rr_id,const struct device * can_dev) : Chassis(max_wheel_rpm),
-        wheel_radius_(wheel_radius) ,motor_fl_(motor_fl_id, can_dev), motor_fr_(motor_fr_id,can_dev), motor_rl_(motor_rl_id,can_dev), motor_rr_(motor_rr_id,can_dev){
+    OmniChassis(float width_span, float length_span, float wheel_radius, float max_wheel_rpm,int motor_fl_id,int motor_fr_id,int motor_rl_id,int motor_rr_id,const struct device * can_dev,k_thread_stack_t *stack,size_t stack_size) : Chassis(max_wheel_rpm),
+        wheel_radius_(wheel_radius) ,motor_fl_(motor_fl_id, can_dev), motor_fr_(motor_fr_id,can_dev), motor_rl_(motor_rl_id,can_dev), motor_rr_(motor_rr_id,can_dev), stack_(stack),stack_size_(stack_size){
     float a = width_span / 2.0f;
     float b = length_span / 2.0f;
     float k = a + b; // 几何系数
@@ -88,6 +88,10 @@ private:
      */
     Vector4f ComputeInverseKinematics(float vx, float vy, float omega) const;
     void NormalizeSpeed(Vector4f& rpm) const;
+    static void ThreadEntry(void *p1, void *p2, void *p3);
+    k_thread_stack_t *stack_;
+    size_t stack_size_;
+    struct k_thread thread_data_;
 
 };
 #endif //MAMMOTH_CHASSIS_H
