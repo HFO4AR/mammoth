@@ -24,8 +24,6 @@
 #include <motor_music.h>
 #include <zephyr/logging/log.h>
 using namespace std;
-
-
 LOG_MODULE_REGISTER(dji_3508, CONFIG_LOG_DEFAULT_LEVEL);
 
 // 静态池分配内存 (BSS段)

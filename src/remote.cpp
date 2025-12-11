@@ -11,13 +11,12 @@
 #include "chassis.h"
 
 const device *const dbus_dev = DEVICE_DT_GET(DT_ALIAS(dbus));
-K_THREAD_STACK_DEFINE(remote_stack_area, 1024);
-Remote remote(10,remote_stack_area,K_THREAD_STACK_SIZEOF(remote_stack_area));
+K_THREAD_STACK_DEFINE(remote_stack_area, 2048);
+Remote remote(30,remote_stack_area,K_THREAD_STACK_SIZEOF(remote_stack_area));
 DjiDbus dbus(dbus_dev);
 extern PTZ ptz;
 extern OmniChassis chassis;
 /****remote thread began*****/
-struct k_thread remote_thread_data;
 void Remote::ThreadEntry(void *p1, void *p2, void *p3)
 {
     Remote *self=static_cast<Remote*>(p1);
@@ -26,7 +25,24 @@ void Remote::ThreadEntry(void *p1, void *p2, void *p3)
     while (true)
     {
         dbus.GetData(local_rc);
-        if (local_rc.s1)//安全检测，s1=0时表明数据接收错误，不进入处理
+        if (abs(local_rc.ch0)<self->deadband_)
+        {
+            local_rc.ch0=0;
+        }
+        if (abs(local_rc.ch1)<self->deadband_)
+        {
+            local_rc.ch1=0;
+        }
+        if (abs(local_rc.ch2)<self->deadband_)
+        {
+            local_rc.ch2=0;
+        }
+        if (abs(local_rc.ch3)<self->deadband_)
+        {
+            local_rc.ch3=0;
+        }
+        /********遥控逻辑********/
+        if (local_rc.s1||local_rc.s2)//安全检测，s1=0时表明数据接收错误，不进入处理
         {
             if (local_rc.s1==1&&local_rc.s2==1)//手动遥控模式
             {

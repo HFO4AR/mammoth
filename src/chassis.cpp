@@ -10,7 +10,7 @@ extern OmniChassis chassis;
 /****remote thread began*****/
 void OmniChassis::ThreadEntry(void *p1, void *p2, void *p3)
 {
-    OmniChassis *self=static_cast<OmniChassis*>(p1);
+    static OmniChassis *self=static_cast<OmniChassis*>(p1);
     while (true)
     {
         self->SetSpeed();
