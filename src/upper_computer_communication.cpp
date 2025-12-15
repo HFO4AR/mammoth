@@ -19,7 +19,13 @@ void UpperComputer::Init()
 }
 
 
-// 辅助函数：将缓冲区的小字符串转为 float 并存入数组
+/**
+ * @brief 内部辅助：将当前 num_buffer_ 中的字符串转为 float 并存入临时缓冲区
+ *
+ * @note
+ * - 只有在遇到分隔符 ',' 或帧尾 '\n' 时调用。
+ * - 转换后的数据存入 temp_data_buf_ (私有缓冲区)，不需要加锁。
+ */
 void UpperComputer::PushNumber()
 {
     if (num_idx_ == 0) return;
@@ -31,8 +37,20 @@ void UpperComputer::PushNumber()
     }
     num_idx_ = 0; // 重置数字缓冲区
 }
-
-// 核心处理逻辑：每收到一个字节调用一次
+/**
+ * @brief 状态机核心逻辑：逐字节解析
+ *
+ * @param byte 从串口接收到的单个字符
+ *
+ * @details
+ * 状态机流程:
+ * 1. WAIT_HEADER: 等待 'H'，收到后重置索引，进入 READ_NUMBER。
+ * 2. READ_NUMBER:
+ *    - 收到数字/小数点/负号: 存入 num_buffer_。
+ *    - 收到 ',': 调用 PushNumber() 解析当前数字。
+ *    - 收到 '\n': 解析最后一个数字 -> 加锁 -> 同步到 data_buf_ -> 重置状态。
+ *    - 收到非法字符: 复位状态机。
+ */
 void UpperComputer::ProcessByte(char byte)
 {
     switch (state_) {
@@ -74,7 +92,12 @@ void UpperComputer::ProcessByte(char byte)
             break;
     }
 }
-
+/**
+ * @brief 后台工作线程入口
+ *
+ * @details
+ * 持续从 Serial 的 RingBuffer 中读取数据块，并逐字节喂给状态机。
+ */
 void UpperComputer::ThreadEntry(void *p1, void *p2, void *p3)
 {
     auto *self = static_cast<UpperComputer*>(p1);
