@@ -10,13 +10,14 @@
 #include <zephyr/drivers/uart.h>
 #include <zephyr/sys/ring_buffer.h>
 #include <cstdint>
+#include <cstdlib>
 #include <cstring>
 
 // 定义模式枚举
 enum SerialMode {
     kPolling,   // 阻塞/轮询模式
     kInterrupt, // 中断模式
-    kDma        // DMA/Async模式 (推荐)
+    kDma        // DMA/Async模式
 };
 
 /**
@@ -30,8 +31,14 @@ class Serial {
     /**
      * @brief 构造函数
      * @param dev UART 设备指针 (例如 DEVICE_DT_GET(DT_NODELABEL(usart1)))
+     * @param mode 工作模式，默认为阻塞模式
+     * @param baudrate 波特率，默认为 115200
+     * @param data_bits 数据位，默认为 8
+     * @param stop_bits 停止位，默认为 1
+     * @param parity 校验位，默认为无校验
      */
-    explicit Serial(const struct device* dev, SerialMode mode = kPolling);
+    explicit Serial(const struct device* dev, SerialMode mode = kPolling, uint32_t baudrate = 115200,
+                    uint8_t data_bits = 8, uint8_t stop_bits = 1, uint8_t parity = UART_CFG_PARITY_NONE);
 
     ~Serial();
 
@@ -52,6 +59,18 @@ class Serial {
     bool SetMode(SerialMode mode);
 
     bool IsReady() const { return device_is_ready(dev_); }
+    /**
+     * @brief 数据转换函数
+     * @param input 输入字符串
+     * @param output 输出浮点数组
+     * @param sep 分隔符
+     * @param start 起始字符
+     * @param end 结束字符
+     * @param len 数据个数
+     */
+    static int char2float(char* input,float* output,char sep,char start,char end,int len);
+
+    int SetBaudrate(uint32_t baudrate);
 
  protected:
     const struct device* dev_;
@@ -66,7 +85,7 @@ class Serial {
     struct k_mutex tx_mutex_;
     // 发送完成信号量：用于 DMA 模式下的同步等待
     struct k_sem tx_done_sem_;
-    // TX 内部缓冲：DMA 需要数据在 RAM 中且传输期间保持有效，不能直接发栈数据
+    // TX 内部缓冲
     uint8_t tx_dma_buf_[DmaBufferSize] __aligned(32);
 
     // --- DMA 双缓冲管理 ---
@@ -80,18 +99,16 @@ class Serial {
     static void UartIsr(const struct device* dev, void* user_data);
     static void AsyncCallback(const struct device* dev, struct uart_event* evt, void* user_data);
 
+    //串口配置
+    struct uart_config cfg_;
+
  private:
     void DisableAll();
 };
-
-// =========================================================================
-// Implementation
-// =========================================================================
-
 template <size_t RB_SZ, size_t DMA_SZ>
-Serial<RB_SZ, DMA_SZ>::Serial(const struct device* dev, SerialMode mode)
-    : dev_(dev), mode_(kPolling), next_dma_buf_(rx_dma_buf_b_) {
-
+Serial<RB_SZ, DMA_SZ>::Serial(const struct device* dev, SerialMode mode, uint32_t baudrate, uint8_t data_bits, uint8_t stop_bits, uint8_t parity)
+    : dev_(dev), mode_(kPolling), next_dma_buf_(rx_dma_buf_b_)
+{
     // 初始化核心 RingBuffer
     ring_buf_init(&rx_ring_buf_, sizeof(rx_ring_mem_), rx_ring_mem_);
 
@@ -100,8 +117,18 @@ Serial<RB_SZ, DMA_SZ>::Serial(const struct device* dev, SerialMode mode)
     // 初始化信号量
     k_sem_init(&tx_done_sem_, 0, 1);
 
-    if (device_is_ready(dev_)) {
+    if (device_is_ready(dev_))
+    {
         SetMode(mode);
+        //获取配置
+        uart_config_get(dev_, &cfg_);
+        cfg_.baudrate = baudrate;
+        cfg_.data_bits = data_bits;
+        cfg_.stop_bits = stop_bits;
+        cfg_.parity = parity;
+        //配置
+        uart_configure(dev_, &cfg_);
+
     }
 }
 
@@ -300,5 +327,49 @@ void Serial<RB_SZ, DMA_SZ>::UartIsr(const struct device* dev, void* user_data) {
         }
     }
 }
+
+template <size_t RingBufferSize, size_t DmaBufferSize>
+int Serial<RingBufferSize, DmaBufferSize>::char2float(char* input, float* output, char sep, char start, char end, int len)
+{
+    {
+        if (input== NULL||output==NULL) return -1;
+        // 1. 寻找开始符的位置
+        const char* startPtr = strchr(input, start);
+        if (startPtr == NULL) return 0;
+
+        // 2. 寻找结束符的位置
+        const char* endPtr = strchr(startPtr, end);
+        if (endPtr == NULL) return 0;
+
+        // 3. 提取有效内容到临时缓冲
+        int contentLen = endPtr - startPtr - 1;
+        if (contentLen <= 0 || contentLen >= 128) return 0; // 内容为空或过长
+
+        char tempBuf[128]; // 临时缓冲区
+        strncpy(tempBuf, startPtr + 1, contentLen);
+        tempBuf[contentLen] = '\0'; // 确保字符串结尾
+
+        // 4. 分割字符串并转换
+        int count = 0;
+        char sepString[2] = {sep, '\0'};
+        char* token = strtok(tempBuf, sepString);
+
+        while (token != NULL && count < len) {
+            output[count] = (float)atof(token); // 转换为浮点型
+            count++;
+            token = strtok(NULL, sepString);
+        }
+        return count;
+    }
+
+};
+
+template <size_t RingBufferSize, size_t DmaBufferSize>
+int Serial<RingBufferSize, DmaBufferSize>::SetBaudrate(uint32_t baudrate)
+{
+    cfg_.baudrate = baudrate;
+    return uart_configure(dev_, &cfg_);
+};
+
 
 #endif //MAMMOTH_SERIAL_H

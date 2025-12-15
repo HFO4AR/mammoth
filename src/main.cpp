@@ -10,6 +10,7 @@
 
 #include "remote.h"
 #include "motor_music.h"
+#include "serial.h"
 static const struct gpio_dt_spec led_blue = GPIO_DT_SPEC_GET(DT_ALIAS(led1), gpios);
 K_THREAD_STACK_DEFINE(chassis_stack_area, 4096);
 OmniChassis chassis(0.5, 0.5, 0.15, 5000, 1, 2, 4, 3, chassis_can_dev, chassis_stack_area,

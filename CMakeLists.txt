@@ -6,7 +6,7 @@ set(BOARD "bee_stm32f4")
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 set(CMAKE_PROJECT_NAME mammoth)
-project(${CMAKE_PROJECT_NAME} LANGUAGES CXX)
+project(${CMAKE_PROJECT_NAME} LANGUAGES C CXX)
 
 target_sources(app PRIVATE
 #        src/*.cpp
@@ -24,6 +24,7 @@ target_sources(app PRIVATE
         src/dji_dbus.cpp
 #        src/motor_music.cpp
         src/upper_computer_communication.cpp
+        src/serial.cpp
 
 )
 
