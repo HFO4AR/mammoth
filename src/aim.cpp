@@ -37,7 +37,7 @@ void PTZ::InitMotorDirection(bool is_positive_direction) {
     while(!pitch_init_complete || !yaw_init_complete) {
         // Handle pitch motor initialization
         if (!pitch_init_complete) {
-            if (abs(pitch_motor_.spd_pid_.data.output) > 1600) {
+            if (abs(pitch_motor_.GetPidOutput(kSpd)) > 1600) {
                 pitch_init_complete = true;
                 if (is_positive_direction) {
                     pitch_data_.max_angle = pitch_motor_.GetTotalPosition();
@@ -56,7 +56,7 @@ void PTZ::InitMotorDirection(bool is_positive_direction) {
         
         // Handle yaw motor initialization
         if (!yaw_init_complete) {
-            if (abs(yaw_motor_.spd_pid_.data.output) > 9000) {
+            if (abs(yaw_motor_.GetPidOutput(kSpd)) > 9000) {
                 yaw_init_complete = true;
                 if (is_positive_direction) {
                     yaw_data_.max_angle = yaw_motor_.GetTotalPosition();
@@ -86,7 +86,7 @@ void PTZ::InitMotorDirection(bool is_positive_direction) {
 void PTZ::CheckMotorOnline()
 {
     int time;
-    while ((!pitch_motor_.temp_&&!yaw_motor_.temp_)||time<100)
+    while ((!pitch_motor_.GetTemperature()&&!yaw_motor_.GetTemperature())||time<100)
     {
         k_msleep(10);
         time++;
@@ -94,10 +94,10 @@ void PTZ::CheckMotorOnline()
     if (time==100)
     {
         printk("初始化超时：");
-        if (!pitch_motor_.temp_)
+        if (!pitch_motor_.GetTemperature())
         {
             printk("pitch离线\n");
-        }else if (!yaw_motor_.temp_)
+        }else if (!yaw_motor_.GetTemperature())
         {
             printk("yaw离线\n");
         }

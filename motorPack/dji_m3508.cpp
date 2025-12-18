@@ -45,13 +45,13 @@ void DjiM3508::SendData() const {
         if (id_ <= 4) {
             frame.id = DJI_3508_TX_ID_LOW;
             int idx = (id_ - 1) * 2;
-            frame.data[idx] = (target_current_ >> 8) & 0xFF;
-            frame.data[idx + 1] = target_current_ & 0xFF;
+            frame.data[idx] = ((int16_t)target_current_ >> 8) & 0xFF;
+            frame.data[idx + 1] = ((int16_t)target_current_ & 0xFF);
         } else {
             frame.id = DJI_3508_TX_ID_HIGH;
             int idx = (id_ - 5) * 2;
-            frame.data[idx] = (target_current_ >> 8) & 0xFF;
-            frame.data[idx + 1] = target_current_ & 0xFF;
+            frame.data[idx] = ((int16_t)target_current_ >> 8) & 0xFF;
+            frame.data[idx + 1] = ((int16_t)target_current_ & 0xFF);
         }
         (void)can_send(can_dev_, &frame, K_NO_WAIT, NULL, NULL);
     }
@@ -60,7 +60,7 @@ void DjiM3508::SendData() const {
 
 
 
-void DjiM3508::SetCurrentOpenLoop(int target) {
+void DjiM3508::SetCurrentOpenLoop(float target) {
     target_current_ = target;
 
     if (my_handler_&&sync_send_mode_)

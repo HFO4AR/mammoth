@@ -36,7 +36,10 @@ public:
  * @param stack_size 线程栈大小 (例如 1024)
  * @param baudrate   串口波特率 (默认 115200)
  */
-    UpperComputer(const struct device* dev, k_thread_stack_t* stack, size_t stack_size,int32_t baudrate=115200) :
+    UpperComputer(const struct device* dev, k_thread_stack_t* stack, size_t stack_size,int32_t baudrate=115200,char begin='H',char end='\n',char sep=',') :
+        frame_begin_(begin),
+        frame_end_(end),
+        frame_sep_(sep),
         serial_(dev, kDma, baudrate),
         stack_(stack),
         stack_size_(stack_size)
@@ -62,6 +65,10 @@ public:
      */
     void GetData(float* out_buf, size_t len);
 protected:
+    //解析字符
+    char frame_begin_;
+    char frame_end_;
+    char frame_sep_;
     float data_buf_[DATA_MAX_LEN]{}; // 存储解析后的 float
     enum State {
         WAIT_HEADER,
@@ -80,7 +87,7 @@ protected:
     struct k_thread thread_data_{};
     static void ThreadEntry(void *p1, void *p2, void *p3);
 
-    struct k_mutex data_mutex_;
+    struct k_mutex data_mutex_{};
 
     void PushNumber();
 
@@ -88,6 +95,6 @@ protected:
 
 
 private:
-    float temp_data_buf_[DATA_MAX_LEN];
+    float temp_data_buf_[DATA_MAX_LEN]{};
 };
 #endif //MAMMOTH_UPPER_COMPUTER_COMMUNICATION_H

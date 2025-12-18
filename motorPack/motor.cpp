@@ -6,25 +6,26 @@
 
 #include <cmath>
 
-void Motor::SetSpeed(int target) {
+void Motor::SetSpeed(float target) {
     spd_pid_.data.actual = spd_;
     spd_pid_.data.target = target;
     spd_pid_.Compuate();
     SetCurrent(spd_pid_.data.output);
 }
 
-void Motor::SetSinglePosition(int target) {
-    pos_pid_.data.actual = pos_;
+void Motor::SetPosition(float target) {
+    pos_pid_.data.actual = total_pos_;
     pos_pid_.data.target = target;
     pos_pid_.Compuate();
     SetSpeed(pos_pid_.data.output);
 }
 
-void Motor::SetPosition(int target) {
+void Motor::SetPositionSingleLoop(int target)
+{
     pos_pid_.data.actual = total_pos_;
     pos_pid_.data.target = target;
     pos_pid_.Compuate();
-    SetSpeed(pos_pid_.data.output);
+    SetCurrent(pos_pid_.data.output);
 }
 
 void Motor::SetPosPid(float kp, float ki, float kd, float max_output,float deadband,float kaw) {
@@ -58,11 +59,11 @@ void Motor::SetSpeedDeadband(float val) {
 void Motor::SetPositionDeadband(float val) {
     pos_pid_.data.deadband = val;
 }
-void Motor::SetCurrentOpenLoop(int target) {
+void Motor::SetCurrentOpenLoop(float target) {
 
 }
 
-void Motor::SetCurrent(int target) {
+void Motor::SetCurrent(float target) {
     if (motor_enable_) {
         SetCurrentOpenLoop(target);
         // motor_enable_ = false;
@@ -102,8 +103,4 @@ void Motor::SetMit(float target_pos, float target_spd, float kp, float kd, float
     SetCurrent(output);
 }
 
-int32_t Motor::GetTotalPosition()
-{
-    return total_pos_;
-}
 

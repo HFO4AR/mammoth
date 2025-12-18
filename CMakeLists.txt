@@ -19,10 +19,11 @@ target_sources(app PRIVATE
         motorPack/can_motor.cpp
         motorPack/dji_m3508.cpp
         motorPack/pid.cpp
+        motorPack/deeprobotics_j60.cpp
         src/load_ring.cpp
         src/can.cpp
         src/dji_dbus.cpp
-#        src/motor_music.cpp
+        src/motor_music.cpp
         src/upper_computer_communication.cpp
         src/serial.cpp
 

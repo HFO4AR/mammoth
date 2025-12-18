@@ -28,7 +28,7 @@ public:
 
     void UpdateFromFrame(struct can_frame *frame) override;
     void SendData() const;
-    void SetCurrentOpenLoop(int target) override;//open loop
+    void SetCurrentOpenLoop(float target) override;//open loop
     void EnableSyncSend();
     static int low_tx_id_;
     static int high_tx_id_;

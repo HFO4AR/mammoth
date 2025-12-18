@@ -3,9 +3,6 @@
 //
 
 #include "upper_computer_communication.h"
-#define FRAME_BEGIN 'H'
-#define FRAME_END '\n'
-#define FRAME_SEP ','
 void UpperComputer::Init()
 {
     k_mutex_init(&data_mutex_);
@@ -55,7 +52,7 @@ void UpperComputer::ProcessByte(char byte)
 {
     switch (state_) {
         case WAIT_HEADER:
-            if (byte == FRAME_BEGIN) {
+            if (byte == frame_begin_) {
                 state_ = READ_NUMBER;
                 num_idx_ = 0;
                 data_idx_ = 0;
@@ -63,10 +60,10 @@ void UpperComputer::ProcessByte(char byte)
             break;
 
         case READ_NUMBER:
-            if (byte == FRAME_SEP) {
+            if (byte == frame_sep_) {
                 PushNumber();
             }
-            else if (byte == FRAME_END) {
+            else if (byte == frame_end_) {
                 PushNumber();
                 k_mutex_lock(&data_mutex_, K_FOREVER);
                 memcpy(data_buf_, temp_data_buf_, sizeof(data_buf_));
