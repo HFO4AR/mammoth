@@ -78,7 +78,7 @@ void DjiM3508::EnableSyncSend() {
 }
 
 void DjiM3508::UpdateFromFrame(struct can_frame *frame) {
-    this->pos_ = sys_get_be16(&frame->data[0]);
+    this->epos_ = sys_get_be16(&frame->data[0]);
     this->spd_ = sys_get_be16(&frame->data[2]);
     this->cur_ = sys_get_be16(&frame->data[4]);
     this->temp_ = frame->data[6];
@@ -104,4 +104,7 @@ DjiM3508::DjiM3508(int id, const struct device *can_dev)
         }
     }
     my_handler_ = nullptr;// 没有可用的 Handler
+
+    //设置角度转换系数
+    SetPositionConversionCoefficient((1.0f/4096.0f)*360.0f);
 }

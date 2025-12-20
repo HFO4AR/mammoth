@@ -15,5 +15,8 @@ public:
     void UpdateFromFrame(struct can_frame *frame) override;
     void SetCurrentOpenLoop(float target) override;
     void SetMit(float target_pos, float target_spd, float kp, float kd, float t_ff);
+protected:
+    int temp_flag_;
 };
+
 #endif //MAMMOTH_DEEPROBOTICS_J60_H

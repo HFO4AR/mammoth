@@ -26,6 +26,7 @@ target_sources(app PRIVATE
         src/motor_music.cpp
         src/upper_computer_communication.cpp
         src/serial.cpp
+        motorPack/pwm_motor.cpp
 
 )
 

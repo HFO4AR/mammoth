@@ -4,8 +4,6 @@
 
 #include "motor.h"
 
-#include <cmath>
-
 void Motor::SetSpeed(float target) {
     spd_pid_.data.actual = spd_;
     spd_pid_.data.target = target;
@@ -14,15 +12,17 @@ void Motor::SetSpeed(float target) {
 }
 
 void Motor::SetPosition(float target) {
-    pos_pid_.data.actual = total_pos_;
+    target = Pos2Epos(target);
+    pos_pid_.data.actual = total_epos_;
     pos_pid_.data.target = target;
     pos_pid_.Compuate();
     SetSpeed(pos_pid_.data.output);
 }
 
-void Motor::SetPositionSingleLoop(int target)
+void Motor::SetPositionSingleLoop(float target)
 {
-    pos_pid_.data.actual = total_pos_;
+    target = Pos2Epos(target);
+    pos_pid_.data.actual = total_epos_;
     pos_pid_.data.target = target;
     pos_pid_.Compuate();
     SetCurrent(pos_pid_.data.output);
@@ -74,22 +74,22 @@ void Motor::SetCurrent(float target) {
     // motor_enable_ = MOTOR_DISABLE;
 }
 void Motor::UpdateTotalPosition() {
-    if (pos_ - last_pos_ > 4096) {
+    if (epos_ - last_pos_ > 4096) {
         round_count_--;
-    } else if (pos_ - last_pos_ < -4096) {
+    } else if (epos_ - last_pos_ < -4096) {
         round_count_++;
     }
-    last_pos_ = pos_;
-    total_pos_ = round_count_ * 8192 + pos_;
+    last_pos_ = epos_;
+    total_epos_ = round_count_ * 8192 + epos_;
 }
 
-void Motor::SetMit(float target_pos, float target_spd, float kp, float kd, float t_ff, uint16_t max_output)
+void Motor::SetMit(const float target_pos, const float target_spd, const float kp, const float kd, const float t_ff, const uint16_t max_output)
 {
-    float output_f = kp * (target_pos - (float)total_pos_) +
+    const float output_f = kp * (target_pos - (float)total_epos_) +
                      kd * (target_spd - (float)spd_) +
                      t_ff;
 
-    int output = (int)output_f;
+    int output = static_cast<int>(output_f);
 
     if (output > max_output)
     {

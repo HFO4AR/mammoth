@@ -8,7 +8,6 @@
 #include "musical_source.h"
 void MotorMusic::play(const Note* musical_score, size_t length,int unit)
 {
-    motor.UpdateTotalPosition();
     float lock_pos = (float)motor.GetTotalPosition();
 
     for (size_t i = 0; i < length; i++)

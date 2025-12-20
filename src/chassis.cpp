@@ -64,7 +64,7 @@ void OmniChassis::NormalizeSpeed(Vector4f& rpm) const {
 void OmniChassis::SetSpeed() {
     Vector4f wheel_rpm=ComputeInverseKinematics(target_vx_, target_vy_, target_omega_);
     for (int i = 0; i < 4; i++) {
-        motors[i]->SetSpeed(static_cast<int>(wheel_rpm(i)));
+        motors[i]->SetSpeed(wheel_rpm(i));
     }
     // if (!device_is_ready(chassis_can_dev)) {
     //     printk("chassis can device is not ready\n");
