@@ -4,7 +4,7 @@
 
 #ifndef MAMMOTH_AIM_H
 #define MAMMOTH_AIM_H
-#include "dji_m3508.h"
+#include "dji_motor.h"
 
 class PTZ {
 public:

@@ -38,7 +38,7 @@ protected:
 
     virtual void SetCurrent(float target); //close loop
 
-    virtual void UpdateTotalPosition();
+    virtual void UpdateTotalPosition(float max_single_epos);
 
 public:
     /**

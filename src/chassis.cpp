@@ -5,7 +5,7 @@
 #include "chassis.h"
 
 #include "can.h"
-#include "dji_m3508.h"
+#include "dji_motor.h"
 extern OmniChassis chassis;
 /****remote thread began*****/
 void OmniChassis::ThreadEntry(void *p1, void *p2, void *p3)

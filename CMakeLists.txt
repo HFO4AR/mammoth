@@ -17,7 +17,6 @@ target_sources(app PRIVATE
         src/remote.cpp
         motorPack/motor.cpp
         motorPack/can_motor.cpp
-        motorPack/dji_m3508.cpp
         motorPack/pid.cpp
         motorPack/deeprobotics_j60.cpp
         src/load_ring.cpp
@@ -28,6 +27,8 @@ target_sources(app PRIVATE
         src/serial.cpp
         motorPack/pwm_motor.cpp
         motorPack/pwm_servo.cpp
+        motorPack/CubeMarsAK.cpp
+        motorPack/dji_motor.cpp
 
 )
 

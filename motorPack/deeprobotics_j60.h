@@ -11,12 +11,15 @@
 #include "can_motor.h"
 class DeepRoboticsJ60 : public CanMotor {
 public:
-    DeepRoboticsJ60(int id,const struct device *can_dev) : CanMotor(id,can_dev,id+Control_Motor_ID + 0x10,true) {}
+    DeepRoboticsJ60(int id,const struct device *can_dev) : CanMotor(id,can_dev,id+Control_Motor_ID + 0x10,true)
+    {
+        SetPositionConversionCoefficient(1.0f);
+    }
     void UpdateFromFrame(struct can_frame *frame) override;
     void SetCurrentOpenLoop(float target) override;
     void SetMit(float target_pos, float target_spd, float kp, float kd, float t_ff);
 protected:
-    int temp_flag_;
+    int temp_flag_{};
 };
 
 #endif //MAMMOTH_DEEPROBOTICS_J60_H

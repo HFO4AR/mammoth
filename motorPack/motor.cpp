@@ -73,14 +73,14 @@ void Motor::SetCurrent(float target) {
     }
     // motor_enable_ = MOTOR_DISABLE;
 }
-void Motor::UpdateTotalPosition() {
-    if (epos_ - last_pos_ > 4096) {
+void Motor::UpdateTotalPosition(float max_single_epos) {
+    if (epos_ - last_pos_ > max_single_epos/2) {
         round_count_--;
-    } else if (epos_ - last_pos_ < -4096) {
+    } else if (epos_ - last_pos_ < -max_single_epos/2) {
         round_count_++;
     }
     last_pos_ = epos_;
-    total_epos_ = round_count_ * 8192 + epos_;
+    total_epos_ = round_count_ * max_single_epos + epos_;
 }
 
 void Motor::SetMit(const float target_pos, const float target_spd, const float kp, const float kd, const float t_ff, const uint16_t max_output)

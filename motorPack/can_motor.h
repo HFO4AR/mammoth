@@ -57,7 +57,7 @@ protected:
     void RegisterToMap();
 
     // 允许子类访问哈希表 (用于 SendData 遍历寻找队友)
-    friend class DjiM3508;
+    // friend class DjiM3508;
 };
 
 #endif //MAMMOTH_CAN_MOTOR_H

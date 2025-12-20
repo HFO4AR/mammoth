@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "motor.h"
-#include "dji_m3508.h"
+#include "dji_motor.h"
 #include <zephyr/kernel.h>
 #include "can.h"
 struct Note {

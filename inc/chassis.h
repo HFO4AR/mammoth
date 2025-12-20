@@ -4,7 +4,7 @@
 
 #ifndef MAMMOTH_CHASSIS_H
 #define MAMMOTH_CHASSIS_H
-#include "dji_m3508.h"
+#include "dji_motor.h"
 #include <Eigen/Dense>
 using namespace std;
 using namespace Eigen;

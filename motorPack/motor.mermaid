@@ -5,6 +5,7 @@ classDiagram
     Motor <|-- PwmMotor
     PwmMotor <|-- PwmServo
     CanMotor *-- DjiBusHandler
+    CanMotor <|-- CubeMarsAK
     
     class Motor {
         +Motor(const int id)
