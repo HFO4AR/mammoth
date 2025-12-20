@@ -1,0 +1,76 @@
+classDiagram
+    Motor <|-- CanMotor
+    CanMotor <|-- DjiM3508
+    CanMotor <|-- DeepRoboticsJ60
+    Motor <|-- PwmMotor
+    PwmMotor <|-- PwmServo
+    CanMotor *-- DjiBusHandler
+    
+    class Motor {
+        +Motor(const int id)
+        +SetSpdPid(float kp, float ki, float kd, float max_output, float deadband, float kaw)
+        +SetPosPid(float kp, float ki, float kd, float max_output, float deadband, float kaw)
+        +SetCurrentOpenLoop(float target)
+        +SetSpeed(float target)
+        +SetPosition(float target)
+        +SetPositionSingleLoop(float target)
+        +SetSpeedMaxOutput(float val)
+        +SetPositionMaxOutput(float val)
+        +SetSpeedDeadband(float val)
+        +SetPositionDeadband(float val)
+        +SetMit(float target_pos, float target_spd, float kp, float kd, float t_ff, uint16_t max_output)
+        +GetTotalPosition() float
+        +GetPosition() float
+        +GetSpeed() float
+        +GetTemperature() float
+        +GetCurrent() float
+        +GetId() int
+        +GetPidOutput(pid_type type) float
+        +Epos2Pos(float epos) float
+        +Pos2Epos(float pos) float
+        #SetCurrent(float target)
+        #UpdateTotalPosition()
+        #SetPositionConversionCoefficient(float k)
+    }
+    
+    class CanMotor {
+        +CanMotor(int id, const struct device *can_dev, uint32_t rx_id, bool is_extended)
+        +GlobalProcessCanFrame(const struct device *dev, struct can_frame *frame) static
+        +UpdateFromFrame(struct can_frame *frame) virtual abstract
+        +GetCanDev() const struct device*
+        +GetRxId() uint32_t
+        #RegisterToMap()
+    }
+    
+    class DjiM3508 {
+        +DjiM3508(int id, const struct device *can_dev)
+        +UpdateFromFrame(struct can_frame *frame) override
+        +SendData() const
+        +SetCurrentOpenLoop(float target) override
+        +EnableSyncSend()
+    }
+    
+    class DeepRoboticsJ60 {
+        +DeepRoboticsJ60(int id, const struct device *can_dev)
+        +UpdateFromFrame(struct can_frame *frame) override
+        +SetCurrentOpenLoop(float target) override
+        +SetMit(float target_pos, float target_spd, float kp, float kd, float t_ff)
+    }
+    
+    class PwmMotor {
+        +PwmMotor(const device *pwm_dev, const int id)
+        +SetDutyCycle(float duty_cycle)
+    }
+    
+    class PwmServo {
+        +PwmServo(const device *pwm_dev, const int id)
+        +SetDutyCycle(float duty_cycle)
+    }
+    
+    class DjiBusHandler {
+        +Init(const struct device *dev, int id_low, int id_high)
+        +Match(const struct device *dev) bool
+        +IsFree() bool
+        +Update(int id, int16_t val)
+        +Send(bool low_group)
+    }

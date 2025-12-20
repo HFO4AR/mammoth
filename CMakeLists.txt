@@ -27,6 +27,7 @@ target_sources(app PRIVATE
         src/upper_computer_communication.cpp
         src/serial.cpp
         motorPack/pwm_motor.cpp
+        motorPack/pwm_servo.cpp
 
 )
 

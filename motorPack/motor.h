@@ -9,31 +9,34 @@
 #include "pid.h"
 #include <cstdint>
 #define PI 3.14159265358979323846f
+
 enum pid_type
 {
     kSpd,
     kPos
 };
-class Motor {
+
+class Motor
+{
 protected:
     //电机数据
     const int id_;
-    float epos_;//单位: °角度
+    float epos_; //单位: °角度
     float total_epos_;
     int16_t round_count_;
-    float spd_;//单位: rpm 角速度
+    float spd_; //单位: rpm 角速度
     float cur_;
     float temp_;
     float last_pos_;
     float target_current_;
-    bool motor_enable_ =true;
-    float k_pos_;//角度转换系数 pos=k*epos
+    bool motor_enable_ = true;
+    float k_pos_; //角度转换系数 pos=k*epos
 
     //PID对象
     Pid pos_pid_;
     Pid spd_pid_;
 
-    virtual void SetCurrent(float target);//close loop
+    virtual void SetCurrent(float target); //close loop
 
     virtual void UpdateTotalPosition();
 
@@ -42,7 +45,9 @@ public:
      * @brief 电机构造函数
      * @param id 电机id
      */
-    Motor (const int id):id_(id) {}
+    Motor(const int id) : id_(id)
+    {
+    }
 
     virtual ~Motor() = default;
     /**
@@ -54,7 +59,8 @@ public:
      * @param deadband 死区（默认为0）
      * @param kaw 积分抗饱和系数（默认为ki/kp）
      */
-    virtual void SetSpdPid(float kp, float ki, float kd, float max_output=1000.0f, float deadband=0,float kaw=-1.0f);
+    virtual void SetSpdPid(float kp, float ki, float kd, float max_output = 1000.0f, float deadband = 0,
+                           float kaw = -1.0f);
     /**
      * @brief 设置位置环pid参数
      * @param kp P增益
@@ -64,12 +70,13 @@ public:
      * @param deadband 死区（默认为0）
      * @param kaw 积分抗饱和系数（默认为ki/kp）
      */
-    virtual void SetPosPid(float kp, float ki, float kd, float max_output=1000.0f, float deadband=0,float kaw=-1.0f);
+    virtual void SetPosPid(float kp, float ki, float kd, float max_output = 1000.0f, float deadband = 0,
+                           float kaw = -1.0f);
     /**
      * @brief 开环设置电流
      * @param target 目标值
      */
-    virtual void SetCurrentOpenLoop(float target);//open loop
+    virtual void SetCurrentOpenLoop(float target); //open loop
     /**
      * @brief pid位置环
      * @param target 目标值
@@ -121,32 +128,32 @@ public:
      * @brief 获取电机多圈位置
      * @return 多圈位置
      */
-    float GetTotalPosition() const{return k_pos_*total_epos_;}
+    float GetTotalPosition() const { return k_pos_ * total_epos_; }
     /**
      * @brief 获取电机位置
      * @return 位置
      */
-    float GetPosition() const{return k_pos_*epos_;}
+    float GetPosition() const { return k_pos_ * epos_; }
     /**
      * @brief 获取电机速度
      * @return 速度
      */
-    float GetSpeed() const{return spd_;}
+    float GetSpeed() const { return spd_; }
     /**
      * @brief 获取电机温度
      * @return 温度
      */
-    float GetTemperature() const{return temp_;}
+    float GetTemperature() const { return temp_; }
     /**
      * @brief 获取电机电流
      * @return 电流
      */
-    float GetCurrent() const {return cur_;}
+    float GetCurrent() const { return cur_; }
     /**
      * @brief 获取电机id
      * @return id
      */
-    int GetId() const {return id_;}
+    int GetId() const { return id_; }
 
     /**
      * @brief 获取PID输出
@@ -174,48 +181,47 @@ public:
      * @param radian 弧度值
      * @return 对应的角度值
      */
-    static float Radian2Degree(float radian){return radian * 180.0f / PI;}
+    static float Radian2Degree(float radian) { return radian * 180.0f / PI; }
 
     /**
      * @brief 角度转换为弧度
      * @param degree 角度值
      * @return 对应的弧度值
      */
-    static float Degree2Radian(float degree){return degree * PI / 180.0f;}
+    static float Degree2Radian(float degree) { return degree * PI / 180.0f; }
 
     /**
      * @brief 线速度转换为转速(RPM)
      * @param velocity 线速度值
      * @return 对应的转速值(RPM)
      */
-    static float Velocity2Rpm(float velocity){return velocity * 60.0f / (2.0f * PI);}
+    static float Velocity2Rpm(float velocity) { return velocity * 60.0f / (2.0f * PI); }
 
     /**
      * @brief 转速(RPM)转换为线速度
      * @param rpm 转速值(RPM)
      * @return 对应的线速度值
      */
-    static float Rpm2Velocity(float rpm){return rpm * (2.0f * PI) / 60.0f;}
+    static float Rpm2Velocity(float rpm) { return rpm * (2.0f * PI) / 60.0f; }
     /**
      * @brief 电气角度转换为输出轴机械角度
      * @param epos 电气角度
      * @return 输出轴机械角度
      */
-    virtual float Epos2Pos(float epos) { return k_pos_*epos; }
+    virtual float Epos2Pos(float epos) { return k_pos_ * epos; }
     /**
      * @brief 输出轴机械角度转换为电气角度
      * @param pos 输出轴机械角度
      * @return 电气角度
      */
-    virtual float Pos2Epos(float pos) { return pos/k_pos_; }
+    virtual float Pos2Epos(float pos) { return pos / k_pos_; }
 
 protected:
     /**
      * @brief 设置电机角度转换系数（子类构造时调用）
      * @param k 转换系数 pos=k*epos （pos单位：°）
      */
-    void SetPositionConversionCoefficient(float k){k_pos_=k;}
-
+    void SetPositionConversionCoefficient(float k) { k_pos_ = k; }
 };
 
 
