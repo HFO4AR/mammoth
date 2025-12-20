@@ -1,6 +1,8 @@
 classDiagram
     Motor <|-- CanMotor
     CanMotor <|-- DjiM3508
+    CanMotor <|-- DjiGM6020
+    CanMotor <|-- DjiM2006
     CanMotor <|-- DeepRoboticsJ60
     Motor <|-- PwmMotor
     PwmMotor <|-- PwmServo
@@ -45,6 +47,22 @@ classDiagram
     
     class DjiM3508 {
         +DjiM3508(int id, const struct device *can_dev)
+        +UpdateFromFrame(struct can_frame *frame) override
+        +SendData() const
+        +SetCurrentOpenLoop(float target) override
+        +EnableSyncSend()
+    }
+    
+    class DjiGM6020 {
+        +DjiGM6020(int id, const struct device *can_dev)
+        +UpdateFromFrame(struct can_frame *frame) override
+        +SendData() const
+        +SetCurrentOpenLoop(float target) override
+        +EnableSyncSend()
+    }
+    
+    class DjiM2006 {
+        +DjiM2006(int id, const struct device *can_dev)
         +UpdateFromFrame(struct can_frame *frame) override
         +SendData() const
         +SetCurrentOpenLoop(float target) override
