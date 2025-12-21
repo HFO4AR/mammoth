@@ -21,9 +21,9 @@ class Motor
 protected:
     //电机数据
     const int id_;
-    float epos_; //单位: °角度
-    float total_epos_;
-    int16_t round_count_;
+    float epos_; //电气角度
+    float total_epos_;//总电气角度
+    int16_t cycle_count_;//多圈周期计数：对于普通电机cycle_count_ = 物理圈数，多圈计数的电机cycle_count_ = 通讯协议的周期数
     float spd_; //单位: rpm 角速度
     float cur_;
     float temp_;
@@ -38,9 +38,10 @@ protected:
 
     virtual void SetCurrent(float target); //close loop
 
-    virtual void UpdateTotalPosition(float max_single_epos);
+    virtual void UpdateTotalPosition(float period);
 
 public:
+
     /**
      * @brief 电机构造函数
      * @param id 电机id
@@ -48,7 +49,26 @@ public:
     Motor(const int id) : id_(id)
     {
     }
+    /**
+     * @brief 初始化
+     * @return 是否成功
+     */
+    virtual bool Begin()
+    {
+        motor_enable_ = true;
+        return motor_enable_;
+    }
 
+    /**
+     * @brief 停止
+     * @return 是否成功
+     */
+    virtual bool Stop()
+    {
+        motor_enable_ = false;
+        SetCurrentOpenLoop(0.0f);
+        return motor_enable_;
+    }
     virtual ~Motor() = default;
     /**
      * @brief 设置速度环pid参数
@@ -121,7 +141,7 @@ public:
     * @param t_ff  前馈力矩
     * @param max_output 输出限幅（默认为1000）
     */
-    virtual void SetMit(float target_pos, float target_spd, float kp, float kd, float t_ff, uint16_t max_output = 1000);
+    virtual bool SetMit(float target_pos, float target_spd, float kp, float kd, float t_ff,float max_output = 1000);
 
     //数据获取接口
     /**
@@ -181,28 +201,28 @@ public:
      * @param radian 弧度值
      * @return 对应的角度值
      */
-    static float Radian2Degree(float radian) { return radian * 180.0f / PI; }
+    static float Rad2Deg(float radian) { return radian * 180.0f / PI; }
 
     /**
      * @brief 角度转换为弧度
      * @param degree 角度值
      * @return 对应的弧度值
      */
-    static float Degree2Radian(float degree) { return degree * PI / 180.0f; }
+    static float Deg2Rad(float degree) { return degree * PI / 180.0f; }
 
     /**
      * @brief 线速度转换为转速(RPM)
      * @param velocity 线速度值
      * @return 对应的转速值(RPM)
      */
-    static float Velocity2Rpm(float velocity) { return velocity * 60.0f / (2.0f * PI); }
+    static float Rads2Rpm(float velocity) { return velocity * 60.0f / (2.0f * PI); }
 
     /**
      * @brief 转速(RPM)转换为线速度
      * @param rpm 转速值(RPM)
      * @return 对应的线速度值
      */
-    static float Rpm2Velocity(float rpm) { return rpm * (2.0f * PI) / 60.0f; }
+    static float Rpm2Rads(float rpm) { return rpm * (2.0f * PI) / 60.0f; }
     /**
      * @brief 电气角度转换为输出轴机械角度
      * @param epos 电气角度

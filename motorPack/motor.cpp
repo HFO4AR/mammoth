@@ -4,6 +4,8 @@
 
 #include "motor.h"
 
+#include <algorithm>
+
 void Motor::SetSpeed(float target) {
     spd_pid_.data.actual = spd_;
     spd_pid_.data.target = target;
@@ -73,34 +75,36 @@ void Motor::SetCurrent(float target) {
     }
     // motor_enable_ = MOTOR_DISABLE;
 }
-void Motor::UpdateTotalPosition(float max_single_epos) {
-    if (epos_ - last_pos_ > max_single_epos/2) {
-        round_count_--;
-    } else if (epos_ - last_pos_ < -max_single_epos/2) {
-        round_count_++;
+void Motor::UpdateTotalPosition(float period) {
+    if (epos_ - last_pos_ > period/2) {
+        cycle_count_--;
+    } else if (epos_ - last_pos_ < -period/2) {
+        cycle_count_++;
     }
     last_pos_ = epos_;
-    total_epos_ = round_count_ * max_single_epos + epos_;
+    total_epos_ = static_cast<float>(cycle_count_) * period + epos_;
 }
 
-void Motor::SetMit(const float target_pos, const float target_spd, const float kp, const float kd, const float t_ff, const uint16_t max_output)
+bool Motor::SetMit(const float target_pos, const float target_spd, const float kp, const float kd, const float t_ff,
+                   const float max_output)
 {
-    const float output_f = kp * (target_pos - (float)total_epos_) +
+    float output = kp * (target_pos - (float)total_epos_) +
                      kd * (target_spd - (float)spd_) +
                      t_ff;
 
-    int output = static_cast<int>(output_f);
-
-    if (output > max_output)
-    {
-        output = max_output;
-    }
-    else if (output < -max_output)
-    {
-        output = -max_output;
-    }
+    //输出限幅
+    // if (output > max_output)
+    // {
+    //     output = max_output;
+    // }
+    // else if (output < -max_output)
+    // {
+    //     output = -max_output;
+    // }
+    output=std::clamp(output,-max_output,max_output);
 
     SetCurrent(output);
+    return true;
 }
 
 

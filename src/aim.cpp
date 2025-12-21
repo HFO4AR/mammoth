@@ -118,6 +118,9 @@ void PTZ::Init()
     pitch_data_.zero_angle=(pitch_data_.max_angle+pitch_data_.min_angle)/2;
     yaw_data_.target=yaw_data_.zero_angle;
     pitch_data_.target=pitch_data_.zero_angle;
+    // 云台电机初始化
+    yaw_motor_.Begin();
+    pitch_motor_.Begin();
     // 云台PID初始化
     yaw_motor_.SetSpdPid(3,0.1,0.0,5000);
     pitch_motor_.SetSpdPid(3,0.1,0.0,5000);

@@ -29,6 +29,7 @@ target_sources(app PRIVATE
         motorPack/pwm_servo.cpp
         motorPack/CubeMarsAK.cpp
         motorPack/dji_motor.cpp
+        src/test.cpp
 
 )
 

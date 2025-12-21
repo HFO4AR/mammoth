@@ -12,6 +12,7 @@
 #include "motor_music.h"
 #include "serial.h"
 #include "upper_computer_communication.h"
+#include "test.h"
 //led指示灯
 static const struct gpio_dt_spec led_blue = GPIO_DT_SPEC_GET(DT_ALIAS(led1), gpios);
 //底盘
@@ -32,6 +33,7 @@ UpperComputer upper_computer(upper_uart_dev, upper_stack_area, K_THREAD_STACK_SI
 
 
 bool Init() {
+    Test();
     CanInit(chassis_can_dev);
     CanInit(ptz_can_dev);
     // ptz.Init();

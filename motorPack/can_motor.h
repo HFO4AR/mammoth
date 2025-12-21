@@ -13,8 +13,8 @@
 
 // 哈希表大小：必须是 2 的幂次方 (32, 64, 128...)
 // 建议设置为最大电机数量的 2 倍左右，以降低哈希冲突率
-#define CAN_HASH_MAP_SIZE 16
-
+// #define CAN_HASH_MAP_SIZE 16
+#define MAX_CAN_MOTORS 32
 class CanMotor : public Motor {
 public:
     /**
@@ -28,12 +28,14 @@ public:
     virtual ~CanMotor();
 
     /**
-     * @brief 静态回调函数，用于 Zephyr 的 can_rx_callback 调用
-     * 使用哈希查找算法 (O(1)) 快速定位电机
+     * @brief 静态回调函数，用于处理接收到的CAN帧数据
+     * 通过ID匹配快速定位对应的电机对象并更新状态
+     * @param dev CAN设备指针
+     * @param frame 接收到的CAN帧
      */
     static void GlobalProcessCanFrame(const struct device *dev, struct can_frame *frame);
 
-    virtual void UpdateFromFrame(struct can_frame *frame) = 0;
+
 
     // 获取绑定的 CAN 设备
     const struct device* GetCanDev() const { return can_dev_; }
@@ -42,22 +44,19 @@ public:
     uint32_t GetRxId() const { return rx_id_; }
 
 protected:
+    virtual void UpdateFromFrame(struct can_frame *frame) = 0;
     const struct device *can_dev_;
     uint32_t rx_id_;     // 接收 ID
     bool is_extended_;   // 是否扩展帧
 
-    // 哈希表相关
-    // 静态哈希表数组，存储所有 CanMotor 指针
-    static CanMotor* hash_map_[CAN_HASH_MAP_SIZE];
+    // --- 注册表管理 ---
+    // 静态数组，存储所有 CanMotor 指针
+    static CanMotor* registry_[MAX_CAN_MOTORS];
 
-    // 哈希函数
-    static uint32_t Hash(uint32_t rx_id, const struct device *dev, bool is_ext);
-
-    // 注册到哈希表
-    void RegisterToMap();
-
-    // 允许子类访问哈希表 (用于 SendData 遍历寻找队友)
-    // friend class DjiM3508;
+    // 注册到数组
+    void Register();
+    // 从数组注销
+    void Unregister();
 };
 
 #endif //MAMMOTH_CAN_MOTOR_H

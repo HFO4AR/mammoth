@@ -78,6 +78,7 @@ void OmniChassis::SetSpeed() {
 void OmniChassis::MotorInit(float spd_pid_kp, float spd_pid_ki, float spd_pid_kd,float spd_pid_max_output, float pos_pid_kp, float pos_pid_ki,
                             float pos_pid_kd,float pos_pid_max_output) {
     for (int i = 0; i < 4; i++) {
+        motors[i]->Begin();
         motors[i]->SetSpdPid(spd_pid_kp, spd_pid_ki, spd_pid_kd);
         motors[i]->SetPosPid(pos_pid_kp, pos_pid_ki, pos_pid_kd);
         motors[i]->SetSpeedMaxOutput(spd_pid_max_output);
