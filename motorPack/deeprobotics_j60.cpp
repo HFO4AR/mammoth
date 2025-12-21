@@ -61,7 +61,7 @@ void DeepRoboticsJ60::SetMit(float target_pos, float target_spd, float kp, float
     kd    = std::clamp(kd,    KD_MIN, KD_MAX);
     t_ff  = std::clamp(t_ff,  T_MIN,  T_MAX);
 
-    // 3. 映射到整型 (你的例程中是在发送函数里做的，这里逻辑一致)
+    // 3. 映射到整型
     uint16_t p_int = float_to_uint(p_des, P_MIN, P_MAX, 16);
     uint16_t v_int = float_to_uint(v_des, V_MIN, V_MAX, 14);
     uint16_t kp_int = (uint16_t)kp;
