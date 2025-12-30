@@ -13,6 +13,8 @@
 #include "serial.h"
 #include "upper_computer_communication.h"
 #include "test.h"
+
+#include "kalman_filter.h"
 //led指示灯
 static const struct gpio_dt_spec led_blue = GPIO_DT_SPEC_GET(DT_ALIAS(led1), gpios);
 //底盘
