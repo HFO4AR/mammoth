@@ -33,8 +33,6 @@ public:
 
     bool SetMit(float target_pos, float target_spd, float kp, float kd, float t_ff);
 
-
-
     void SetCurrentOpenLoop(float target) override;
 
     bool Begin()override;

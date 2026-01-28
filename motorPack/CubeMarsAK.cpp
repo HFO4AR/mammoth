@@ -73,9 +73,9 @@ bool CubeMarsAK::SetMit(float target_pos, float target_spd, float kp, float kd, 
     // 2. 限制范围
     p_des_rad = std::clamp(p_des_rad, -params_.p_max, params_.p_max);
     v_des_rad = std::clamp(v_des_rad, -params_.v_max, params_.v_max);
-    kp        = std::clamp(kp,        -params_.kp_max, params_.kp_max);
-    kd        = std::clamp(kd,        -params_.kd_max, params_.kd_max);
-    t_ff      = std::clamp(t_ff,      -params_.t_max,  params_.t_max);
+    kp = std::clamp(kp, -params_.kp_max, params_.kp_max);
+    kd = std::clamp(kd, -params_.kd_max, params_.kd_max);
+    t_ff = std::clamp(t_ff, -params_.t_max, params_.t_max);
 
     // 3. 浮点转整型 (手册 P41)
     int p_int = float_to_uint(p_des_rad, -params_.p_max, params_.p_max, 16);

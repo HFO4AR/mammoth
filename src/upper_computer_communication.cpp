@@ -102,11 +102,9 @@ void UpperComputer::ThreadEntry(void *p1, void *p2, void *p3)
 
     while (true)
     {
-        // 1. 批量读取以减少锁的开销
         int32_t len = self->serial_.Read(chunk, sizeof(chunk));
 
         if (len > 0) {
-            // 2. 逐字节喂给状态机
             for (int i = 0; i < len; i++) {
                 self->ProcessByte((char)chunk[i]);
             }

@@ -35,8 +35,6 @@ public:
      */
     static void GlobalProcessCanFrame(const struct device *dev, struct can_frame *frame);
 
-
-
     // 获取绑定的 CAN 设备
     const struct device* GetCanDev() const { return can_dev_; }
 
