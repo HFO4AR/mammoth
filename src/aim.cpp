@@ -6,16 +6,15 @@
 
 #include <cmath>
 
-#include "dji_m3508.h"
+#include "dji_motor.h"
 
 #include <zephyr/kernel.h>
 
 #include <dji_dbus.h>
 extern PTZ ptz;
 /***云台线程begain***/
-K_THREAD_STACK_DEFINE(ptz_stack_area, 4096);
-struct k_thread ptz_thread_data;
-void ptz_thread_entry(void *p1, void *p2, void *p3)
+
+void PTZ::ThreadEntry(void *p1, void *p2, void *p3)
 {
     while (true)
     {
@@ -38,7 +37,7 @@ void PTZ::InitMotorDirection(bool is_positive_direction) {
     while(!pitch_init_complete || !yaw_init_complete) {
         // Handle pitch motor initialization
         if (!pitch_init_complete) {
-            if (abs(pitch_motor_.spd_pid_.data.output) > 1600) {
+            if (abs(pitch_motor_.GetPidOutput(kSpd)) > 1600) {
                 pitch_init_complete = true;
                 if (is_positive_direction) {
                     pitch_data_.max_angle = pitch_motor_.GetTotalPosition();
@@ -57,7 +56,7 @@ void PTZ::InitMotorDirection(bool is_positive_direction) {
         
         // Handle yaw motor initialization
         if (!yaw_init_complete) {
-            if (abs(yaw_motor_.spd_pid_.data.output) > 9000) {
+            if (abs(yaw_motor_.GetPidOutput(kSpd)) > 9000) {
                 yaw_init_complete = true;
                 if (is_positive_direction) {
                     yaw_data_.max_angle = yaw_motor_.GetTotalPosition();
@@ -87,7 +86,7 @@ void PTZ::InitMotorDirection(bool is_positive_direction) {
 void PTZ::CheckMotorOnline()
 {
     int time;
-    while ((!pitch_motor_.temp_&&!yaw_motor_.temp_)||time<100)
+    while ((!pitch_motor_.GetTemperature()&&!yaw_motor_.GetTemperature())||time<100)
     {
         k_msleep(10);
         time++;
@@ -95,10 +94,10 @@ void PTZ::CheckMotorOnline()
     if (time==100)
     {
         printk("初始化超时：");
-        if (!pitch_motor_.temp_)
+        if (!pitch_motor_.GetTemperature())
         {
             printk("pitch离线\n");
-        }else if (!yaw_motor_.temp_)
+        }else if (!yaw_motor_.GetTemperature())
         {
             printk("yaw离线\n");
         }
@@ -119,6 +118,9 @@ void PTZ::Init()
     pitch_data_.zero_angle=(pitch_data_.max_angle+pitch_data_.min_angle)/2;
     yaw_data_.target=yaw_data_.zero_angle;
     pitch_data_.target=pitch_data_.zero_angle;
+    // 云台电机初始化
+    yaw_motor_.Begin();
+    pitch_motor_.Begin();
     // 云台PID初始化
     yaw_motor_.SetSpdPid(3,0.1,0.0,5000);
     pitch_motor_.SetSpdPid(3,0.1,0.0,5000);
@@ -126,14 +128,12 @@ void PTZ::Init()
     pitch_motor_.SetPosPid(0.5,0,4,500);
     //云台线程初始化
     k_msleep(1000);
-    k_thread_create(&ptz_thread_data,
-                    ptz_stack_area,
-                    K_THREAD_STACK_SIZEOF(ptz_stack_area),
-                    ptz_thread_entry,
-                    NULL, NULL, NULL,
-                    5,
-                    0,
-                    K_NO_WAIT);
+    k_thread_create(&thread_data_,
+                stack_,
+                stack_size_,
+                ThreadEntry,
+                this,NULL,NULL,
+                5, 0,K_NO_WAIT);
     printk("云台初始化完成\n");
 }
 

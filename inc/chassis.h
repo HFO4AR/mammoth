@@ -4,14 +4,19 @@
 
 #ifndef MAMMOTH_CHASSIS_H
 #define MAMMOTH_CHASSIS_H
-#include "dji_m3508.h"
+#include "dji_motor.h"
 #include <Eigen/Dense>
 using namespace std;
 using namespace Eigen;
-class Chassis {
+
+class Chassis
+{
 public:
     float max_wheel_rpm_;
-    Chassis(float max_rpm):max_wheel_rpm_(max_rpm){};
+
+    Chassis(float max_rpm) : max_wheel_rpm_(max_rpm)
+    {
+    };
     ~Chassis() = default;
     float max_speed_;
     float world_x_;
@@ -27,16 +32,21 @@ public:
     float target_vx_;
     float target_vy_;
     float target_omega_;
-    virtual void SetSpeed() {}
+
+    virtual void SetSpeed()
+    {
+    }
 };
-class OmniChassis:protected Chassis{
+
+class OmniChassis : protected Chassis
+{
 public:
     DjiM3508 motor_fl_;
     DjiM3508 motor_fr_;
     DjiM3508 motor_rl_;
     DjiM3508 motor_rr_;
     DjiM3508* motors[4] = {&motor_fl_, &motor_fr_, &motor_rl_, &motor_rr_};
-    Matrix<float,4,3> geometry_matrix_;
+    Matrix<float, 4, 3> geometry_matrix_;
     float wheel_radius_;
     /**
      * @brief 构造函数，初始化几何矩阵
@@ -49,24 +59,33 @@ public:
      * @param motor_rl_id   左后电机 ID
      * @param motor_rr_id   右后电机 ID
      */
-    OmniChassis(float width_span, float length_span, float wheel_radius, float max_wheel_rpm,int motor_fl_id,int motor_fr_id,int motor_rl_id,int motor_rr_id,const struct device * can_dev) : Chassis(max_wheel_rpm),
-        wheel_radius_(wheel_radius) ,motor_fl_(motor_fl_id, can_dev), motor_fr_(motor_fr_id,can_dev), motor_rl_(motor_rl_id,can_dev), motor_rr_(motor_rr_id,can_dev){
-    float a = width_span / 2.0f;
-    float b = length_span / 2.0f;
-    float k = a + b; // 几何系数
+    OmniChassis(float width_span, float length_span, float wheel_radius, float max_wheel_rpm, int motor_fl_id,
+                int motor_fr_id, int motor_rl_id, int motor_rr_id, const struct device* can_dev,
+                k_thread_stack_t* stack, size_t stack_size) : Chassis(max_wheel_rpm),
+                                                              wheel_radius_(wheel_radius),
+                                                              motor_fl_(motor_fl_id, can_dev),
+                                                              motor_fr_(motor_fr_id, can_dev),
+                                                              motor_rl_(motor_rl_id, can_dev),
+                                                              motor_rr_(motor_rr_id, can_dev), stack_(stack),
+                                                              stack_size_(stack_size)
+    {
+        float a = width_span / 2.0f;
+        float b = length_span / 2.0f;
+        float k = a + b; // 几何系数
 
-    // 初始化逆运动学矩阵 (对应 X 型布局)
-    // 顺序: [FL, FR, RL, RR]
-    // 输入: [vx, vy, omega]
+        // 初始化逆运动学矩阵 (对应 X 型布局)
+        // 顺序: [FL, FR, RL, RR]
+        // 输入: [vx, vy, omega]
 
-    geometry_matrix_ <<
+        geometry_matrix_ <<
             1, 1, k, // FL: vx - vy - k*w
             -1, 1, k, // FR: vx + vy + k*w
             1, -1, k, // RL: vx + vy - k*w
             -1, -1, k; // RR: vx - vy + k*w
-}
+    }
 
-    void MotorInit(float spd_pid_kp, float spd_pid_ki, float spd_pid_kd,float spd_pid_max_output=2000,float pos_pid_kp=0, float pos_pid_ki=0, float pos_pid_kd=0,float pos_pid_max_output=2000);
+    void MotorInit(float spd_pid_kp, float spd_pid_ki, float spd_pid_kd, float spd_pid_max_output = 2000,
+                   float pos_pid_kp = 0, float pos_pid_ki = 0, float pos_pid_kd = 0, float pos_pid_max_output = 2000);
     //实际底盘速度发送函数
     void SetSpeed();
     /**
@@ -75,9 +94,10 @@ public:
      * @param vy     底盘 Y 轴速度 (m/s)
      * @param omega  底盘自转角速度 (rad/s)
      */
-    void SetTargetSpeed(float vx,float vy,float omega);
+    void SetTargetSpeed(float vx, float vy, float omega);
 
     int Init();
+
 private:
     /**
      * @brief 逆运动学解算：输入底盘速度，输出电机转速(RPM)
@@ -88,6 +108,9 @@ private:
      */
     Vector4f ComputeInverseKinematics(float vx, float vy, float omega) const;
     void NormalizeSpeed(Vector4f& rpm) const;
-
+    static void ThreadEntry(void* p1, void* p2, void* p3);
+    k_thread_stack_t* stack_;
+    size_t stack_size_;
+    struct k_thread thread_data_;
 };
 #endif //MAMMOTH_CHASSIS_H

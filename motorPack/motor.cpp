@@ -4,27 +4,30 @@
 
 #include "motor.h"
 
-#include <cmath>
+#include <algorithm>
 
-void Motor::SetSpeed(int target) {
+void Motor::SetSpeed(float target) {
     spd_pid_.data.actual = spd_;
     spd_pid_.data.target = target;
     spd_pid_.Compuate();
     SetCurrent(spd_pid_.data.output);
 }
 
-void Motor::SetSinglePosition(int target) {
-    pos_pid_.data.actual = pos_;
+void Motor::SetPosition(float target) {
+    target = Pos2Epos(target);
+    pos_pid_.data.actual = total_epos_;
     pos_pid_.data.target = target;
     pos_pid_.Compuate();
     SetSpeed(pos_pid_.data.output);
 }
 
-void Motor::SetPosition(int target) {
-    pos_pid_.data.actual = total_pos_;
+void Motor::SetPositionSingleLoop(float target)
+{
+    target = Pos2Epos(target);
+    pos_pid_.data.actual = total_epos_;
     pos_pid_.data.target = target;
     pos_pid_.Compuate();
-    SetSpeed(pos_pid_.data.output);
+    SetCurrent(pos_pid_.data.output);
 }
 
 void Motor::SetPosPid(float kp, float ki, float kd, float max_output,float deadband,float kaw) {
@@ -58,11 +61,11 @@ void Motor::SetSpeedDeadband(float val) {
 void Motor::SetPositionDeadband(float val) {
     pos_pid_.data.deadband = val;
 }
-void Motor::SetCurrentOpenLoop(int target) {
+void Motor::SetCurrentOpenLoop(float target) {
 
 }
 
-void Motor::SetCurrent(int target) {
+void Motor::SetCurrent(float target) {
     if (motor_enable_) {
         SetCurrentOpenLoop(target);
         // motor_enable_ = false;
@@ -72,38 +75,36 @@ void Motor::SetCurrent(int target) {
     }
     // motor_enable_ = MOTOR_DISABLE;
 }
-void Motor::UpdateTotalPosition() {
-    if (pos_ - last_pos_ > 4096) {
-        round_count_--;
-    } else if (pos_ - last_pos_ < -4096) {
-        round_count_++;
+void Motor::UpdateTotalPosition(float period) {
+    if (epos_ - last_pos_ > period/2) {
+        cycle_count_--;
+    } else if (epos_ - last_pos_ < -period/2) {
+        cycle_count_++;
     }
-    last_pos_ = pos_;
-    total_pos_ = round_count_ * 8192 + pos_;
+    last_pos_ = epos_;
+    total_epos_ = static_cast<float>(cycle_count_) * period + epos_;
 }
 
-void Motor::SetMit(float target_pos, float target_spd, float kp, float kd, float t_ff, uint16_t max_output)
+bool Motor::SetMit(const float target_pos, const float target_spd, const float kp, const float kd, const float t_ff,
+                   const float max_output)
 {
-    float output_f = kp * (target_pos - (float)total_pos_) +
+    float output = kp * (target_pos - (float)total_epos_) +
                      kd * (target_spd - (float)spd_) +
                      t_ff;
 
-    int output = (int)output_f;
-
-    if (output > max_output)
-    {
-        output = max_output;
-    }
-    else if (output < -max_output)
-    {
-        output = -max_output;
-    }
+    //输出限幅
+    // if (output > max_output)
+    // {
+    //     output = max_output;
+    // }
+    // else if (output < -max_output)
+    // {
+    //     output = -max_output;
+    // }
+    output=std::clamp(output,-max_output,max_output);
 
     SetCurrent(output);
+    return true;
 }
 
-int32_t Motor::GetTotalPosition()
-{
-    return total_pos_;
-}
 

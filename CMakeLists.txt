@@ -17,13 +17,20 @@ target_sources(app PRIVATE
         src/remote.cpp
         motorPack/motor.cpp
         motorPack/can_motor.cpp
-        motorPack/dji_m3508.cpp
         motorPack/pid.cpp
+        motorPack/deeprobotics_j60.cpp
         src/load_ring.cpp
         src/can.cpp
         src/dji_dbus.cpp
-        src/async_serial.cpp
-#        src/motor_music.cpp
+        src/motor_music.cpp
+        src/upper_computer_communication.cpp
+        src/serial.cpp
+        motorPack/pwm_motor.cpp
+        motorPack/pwm_servo.cpp
+        motorPack/CubeMarsAK.cpp
+        motorPack/dji_motor.cpp
+        src/test.cpp
+
 )
 
 target_include_directories(app PRIVATE inc src motorPack eigen

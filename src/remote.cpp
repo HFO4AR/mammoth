@@ -11,21 +11,38 @@
 #include "chassis.h"
 
 const device *const dbus_dev = DEVICE_DT_GET(DT_ALIAS(dbus));
-Remote remote;
+K_THREAD_STACK_DEFINE(remote_stack_area, 2048);
+Remote remote(30,remote_stack_area,K_THREAD_STACK_SIZEOF(remote_stack_area));
 DjiDbus dbus(dbus_dev);
 extern PTZ ptz;
 extern OmniChassis chassis;
 /****remote thread began*****/
-K_THREAD_STACK_DEFINE(remote_stack_area, 1024);
-struct k_thread remote_thread_data;
-void remote_thread_entry(void *p1, void *p2, void *p3)
+void Remote::ThreadEntry(void *p1, void *p2, void *p3)
 {
+    Remote *self=static_cast<Remote*>(p1);
     DjiDbus::RemoteData local_rc;
 
     while (true)
     {
         dbus.GetData(local_rc);
-        if (local_rc.s1)//安全检测，s1=0时表明数据接收错误，不进入处理
+        if (abs(local_rc.ch0)<self->deadband_)
+        {
+            local_rc.ch0=0;
+        }
+        if (abs(local_rc.ch1)<self->deadband_)
+        {
+            local_rc.ch1=0;
+        }
+        if (abs(local_rc.ch2)<self->deadband_)
+        {
+            local_rc.ch2=0;
+        }
+        if (abs(local_rc.ch3)<self->deadband_)
+        {
+            local_rc.ch3=0;
+        }
+        /********遥控逻辑********/
+        if (local_rc.s1||local_rc.s2)//安全检测，s1=0时表明数据接收错误，不进入处理
         {
             if (local_rc.s1==1&&local_rc.s2==1)//手动遥控模式
             {
@@ -65,25 +82,27 @@ void remote_thread_entry(void *p1, void *p2, void *p3)
     }
 }
 /****remote thread end*****/
-void RemoteInit()
+
+int Remote::Init()
 {
     if (!device_is_ready(dbus_dev)) {
         printk("DBUS device is not ready\n");
-        return;
+        return 0;
     }
     
     k_msleep(10);
     int ret=dbus.ReceivingData();
     if (ret != 0) {
         printk("Failed to start DBUS receiving, error: %d\n", ret);
-        return;
+        return 0;
     }
     
-    k_thread_create(&remote_thread_data,
-                    remote_stack_area,
-                    K_THREAD_STACK_SIZEOF(remote_stack_area),
-                    remote_thread_entry,
-                    NULL,NULL,NULL,
-                    5, 0,K_NO_WAIT);
+    k_thread_create(&thread_data_,
+                stack_,
+                stack_size_,
+                ThreadEntry,
+                this,NULL,NULL,
+                5, 0,K_NO_WAIT);
 
+    return 1;
 }

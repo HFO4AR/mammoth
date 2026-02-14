@@ -5,17 +5,15 @@
 #include "chassis.h"
 
 #include "can.h"
-#include "dji_m3508.h"
+#include "dji_motor.h"
 extern OmniChassis chassis;
 /****remote thread began*****/
-K_THREAD_STACK_DEFINE(chassis_stack_area, 2048);
-struct k_thread chassis_thread_data;
-int b=0;
-void chassis_thread_entry(void *p1, void *p2, void *p3)
+void OmniChassis::ThreadEntry(void *p1, void *p2, void *p3)
 {
+    static OmniChassis *self=static_cast<OmniChassis*>(p1);
     while (true)
     {
-        chassis.SetSpeed();
+        self->SetSpeed();
         k_msleep(10);
     }
 }
@@ -26,12 +24,13 @@ int OmniChassis::Init()
     k_msleep(10);
     MotorInit(3,0.5,0,5000,0.5,0.01,0.5,2000);
     SetTargetSpeed(0,0,0);
-    k_thread_create(&chassis_thread_data,
-                chassis_stack_area,
-                K_THREAD_STACK_SIZEOF(chassis_stack_area),
-                chassis_thread_entry,
-                NULL,NULL,NULL,
+    k_thread_create(&thread_data_,
+                stack_,
+                stack_size_,
+                ThreadEntry,
+                this,NULL,NULL,
                 5, 0,K_NO_WAIT);
+    return 1;
 }
 Vector4f OmniChassis::ComputeInverseKinematics(float vx, float vy, float omega) const {
     // 1. 构建输入向量 V [3x1]
@@ -65,7 +64,7 @@ void OmniChassis::NormalizeSpeed(Vector4f& rpm) const {
 void OmniChassis::SetSpeed() {
     Vector4f wheel_rpm=ComputeInverseKinematics(target_vx_, target_vy_, target_omega_);
     for (int i = 0; i < 4; i++) {
-        motors[i]->SetSpeed(static_cast<int>(wheel_rpm(i)));
+        motors[i]->SetSpeed(wheel_rpm(i));
     }
     // if (!device_is_ready(chassis_can_dev)) {
     //     printk("chassis can device is not ready\n");
@@ -79,6 +78,7 @@ void OmniChassis::SetSpeed() {
 void OmniChassis::MotorInit(float spd_pid_kp, float spd_pid_ki, float spd_pid_kd,float spd_pid_max_output, float pos_pid_kp, float pos_pid_ki,
                             float pos_pid_kd,float pos_pid_max_output) {
     for (int i = 0; i < 4; i++) {
+        motors[i]->Begin();
         motors[i]->SetSpdPid(spd_pid_kp, spd_pid_ki, spd_pid_kd);
         motors[i]->SetPosPid(pos_pid_kp, pos_pid_ki, pos_pid_kd);
         motors[i]->SetSpeedMaxOutput(spd_pid_max_output);
