@@ -139,8 +139,8 @@ public:
      * @brief 位置轨迹追踪控制
      * @param target_pos 目标位置 (Deg)
      * @param max_spd    最大运行速度 (RPM)
-     * @param decel      减速斜率 (建议单位 RPM/s)
-     * @param decel 减速度 (rpm/s)，默认等于加速度
+     * @param accel      加速度
+     * @param decel     减速度 默认等于加速度
      * @param deadband  死区
      * @param dead_spd 死区速度阈值
      */
