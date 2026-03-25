@@ -30,6 +30,7 @@ target_sources(app PRIVATE
         motorPack/CubeMarsAK.cpp
         motorPack/dji_motor.cpp
         src/test.cpp
+        motorPack/get_time.cpp
 
 )
 

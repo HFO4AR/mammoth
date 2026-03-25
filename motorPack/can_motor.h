@@ -11,9 +11,6 @@
 #include <zephyr/drivers/can.h>
 #include <zephyr/kernel.h>
 
-// 哈希表大小：必须是 2 的幂次方 (32, 64, 128...)
-// 建议设置为最大电机数量的 2 倍左右，以降低哈希冲突率
-// #define CAN_HASH_MAP_SIZE 16
 #define MAX_CAN_MOTORS 32
 class CanMotor : public Motor {
 public:

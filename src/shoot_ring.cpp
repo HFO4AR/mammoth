@@ -28,5 +28,5 @@ void Shoot::Init()
 
 void Shoot::ThreadEntry(void* p1, void* p2, void* p3)
 {
-
+    k_msleep(10);
 }

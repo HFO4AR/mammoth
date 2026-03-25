@@ -5,7 +5,7 @@
 #ifndef MAMMOTH_MOTOR_H
 #define MAMMOTH_MOTOR_H
 
-
+#ifdef __cplusplus
 #include "pid.h"
 #include <cstdint>
 #define PI 3.14159265358979323846f
@@ -23,25 +23,39 @@ protected:
     const int id_;
     float epos_; //电气角度
     float total_epos_;//总电气角度
+    float total_epos_zero_;// 原点
     int16_t cycle_count_;//多圈周期计数：对于普通电机cycle_count_ = 物理圈数，多圈计数的电机cycle_count_ = 通讯协议的周期数
     float spd_; //单位: rpm 角速度
     float cur_;
     float temp_;
     float last_pos_;
     float target_current_;
-    bool motor_enable_ = true;
+    bool motor_enable_ =false;
     float k_pos_; //角度转换系数 pos=k*epos
 
     //PID对象
     Pid pos_pid_;
     Pid spd_pid_;
+    bool pos_pid_initialized_=false;
+    bool spd_pid_initialized_=false;
+
+    // 梯形加减速相关状态
+    float last_trap_vel_ = 0;      // 上一时刻的指令速度 (RPM)
+    float last_trap_pos_ = 0;      // 上一时刻的指令位置 (Deg)
+    bool trap_init_ = false;       // 轨迹规划初始化标志
+
+    //平方根控制参数
+    float last_cmd_spd_ = 0;      // 上一次的速度指令
+    uint32_t last_timestamp_ = 0; // 上一次调用的时间戳 (ms)
+
+    // 减速比
+
 
     virtual void SetCurrent(float target); //close loop
 
     virtual void UpdateTotalPosition(float period);
 
 public:
-
     /**
      * @brief 电机构造函数
      * @param id 电机id
@@ -56,6 +70,7 @@ public:
     virtual bool Begin()
     {
         motor_enable_ = true;
+        total_epos_zero_=total_epos_;
         return motor_enable_;
     }
 
@@ -113,6 +128,24 @@ public:
      */
     virtual void SetPositionSingleLoop(float target);
     /**
+     * @brief 使用梯形加减速曲线移动到目标位置
+     * @param target 目标位置 (度)
+     * @param max_speed 最大速度限制 (rpm)
+     * @param accel 加速度 (rpm/s)
+     * @param decel 减速度 (rpm/s)，默认等于加速度
+     */
+    virtual void SetPositionTrapezoid(float target, float max_speed, float accel,float dt, float decel = -1);
+    /**
+     * @brief 位置轨迹追踪控制
+     * @param target_pos 目标位置 (Deg)
+     * @param max_spd    最大运行速度 (RPM)
+     * @param decel      减速斜率 (建议单位 RPM/s)
+     * @param decel 减速度 (rpm/s)，默认等于加速度
+     * @param deadband  死区
+     * @param dead_spd 死区速度阈值
+     */
+    virtual void SetPositionProfile(float target_pos, float max_spd, float accel,float decel=-1,float deadband=0.05f,float dead_spd=10.0f);
+    /**
      * @brief 设置速度环最大输出（即电流限幅）
      * @param val 值
      */
@@ -159,6 +192,12 @@ public:
      * @return 速度
      */
     float GetSpeed() const { return spd_; }
+    /**
+     * @brief 获取电机零点位置
+     * @return 机械零点
+     */
+    float GetZero () const { return k_pos_ * total_epos_zero_; }
+
     /**
      * @brief 获取电机温度
      * @return 温度
@@ -244,5 +283,5 @@ protected:
     void SetPositionConversionCoefficient(float k) { k_pos_ = k; }
 };
 
-
+#endif
 #endif //MAMMOTH_MOTOR_H

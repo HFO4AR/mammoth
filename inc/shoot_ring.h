@@ -23,7 +23,6 @@ private:
     PwmMotor motor_right_;
     PwmMotor motor_left_;
     void SetMotorRatio(float ratio_right, float ratio_left);
-
     static void ThreadEntry(void* p1, void* p2, void* p3);
     k_thread_stack_t* stack_;
     size_t stack_size_;
