@@ -41,7 +41,6 @@ void Motor::SetPositionTrapezoid(float target, float max_speed, float accel, flo
 {
     if (decel < 0) decel = accel;
 
-    // 1. 初始化：如果是第一次运行，或者长时间未更新，从当前实际位置开始规划
     if (!trap_init_)
     {
         last_trap_pos_ = GetTotalPosition();
@@ -49,20 +48,17 @@ void Motor::SetPositionTrapezoid(float target, float max_speed, float accel, flo
         trap_init_ = true;
     }
 
-    // 2. 计算当前位移偏差
     float current_pos = GetTotalPosition();
     float pos_error = target - current_pos;
     float dir = (pos_error > 0) ? 1.0f : -1.0f;
     pos_error = std::abs(pos_error);
 
-    // 3. 计算“刹车距离” (Stopping Distance)
-    // 公式: s = v^2 / (2 * a)
-    // 注意：这里的 v 是 RPM，需要保持单位一致或转换。这里假设 accel 单位是 RPM/s
+    // s = v^2 / (2 * a)
     float current_vel_abs = std::abs(last_trap_vel_);
     float stop_dist = (current_vel_abs * current_vel_abs) / (2.0f * decel);
 
     // 将角度误差转换为“预计停止需要的角度”
-    // 注意：这里需要考虑 RPM 到 Deg/s 的转换。 1 RPM = 6 Deg/s
+    // 考虑 RPM 到 Deg/s 的转换。 1 RPM = 6 Deg/s
     // 停止所需时间 t = v / decel
     // 停止所需角度 stop_angle = (v * 6) * (t / 2) = (v * 6) * (v / (2 * decel))
     float stop_angle = (current_vel_abs * 6.0f) * (current_vel_abs / (2.0f * decel));
@@ -77,16 +73,12 @@ void Motor::SetPositionTrapezoid(float target, float max_speed, float accel, flo
     }
     else if (pos_error <= stop_angle)
     {
-        // 4. 减速阶段：目标速度向0靠拢
         target_vel = std::sqrt(2.0f * decel * pos_error / 6.0f) * dir;
     }
     else
     {
-        // 5. 加速或匀速阶段
         target_vel = max_speed * dir;
     }
-
-    // 6. 速度斜坡限制 (限制最大加速度)
     float vel_step = accel * dt;
     float vel_error = target_vel - last_trap_vel_;
 
