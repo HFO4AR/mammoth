@@ -95,7 +95,6 @@ void Motor::SetPositionTrapezoid(float target, float max_speed, float accel, flo
         last_trap_vel_ = target_vel;
     }
 
-    // 7. 最终限幅
     last_trap_vel_ = std::clamp(last_trap_vel_, -max_speed, max_speed);
 
     SetSpeed(last_trap_vel_);
